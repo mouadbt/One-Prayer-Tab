@@ -1,0 +1,3 @@
+# One Newtab Prayer
+
+A minimalist browser extension (Chrome + Firefox) that replaces your new tab page with a clean interface with search functionality, prayer times, weather and more...

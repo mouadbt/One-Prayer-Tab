@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+:root {
+    --background100: oklab(20.992% -0.0039 -0.03394);
+    --background50: oklch(28.073% 0.03805 270.996);
+    --foreground25: oklab(100% 0 0/0.25);
+    --foreground50: oklab(100% 0 0/0.5);
+    --foreground75: oklab(100% 0 0/0.75);
+    --foreground100: oklab(100% 0 0);
+}
+
+* {
+    color: var(--foreground100);
+}
