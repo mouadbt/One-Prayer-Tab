@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+
 :root {
     --background100: oklab(20.992% -0.0039 -0.03394);
     --background50: oklch(28.073% 0.03805 270.996);
@@ -8,6 +9,7 @@
     --foreground75: oklab(100% 0 0/0.75);
     --foreground100: oklab(100% 0 0);
 
+    --space-xxs: 0.5rem;
     --space-xs: 1rem;
     --space-lg: 2.5rem;
 
@@ -19,9 +21,7 @@
 
     --font-family-base: "Courier New", Courier, monospace;
     --font-family-base: 'CozetteVector';
-
 }
-
 
 @font-face {
     font-family: 'CozetteVector';
@@ -32,6 +32,7 @@
     color: var(--foreground100);
     font-family: var(--font-family-base);
     font-size: var(--font-size-base);
+    user-select: none;
 }
 
 .active-search-container {
@@ -43,7 +44,7 @@
     border-bottom-right-radius: 0;
 }
 
-.no-suggestioons .s_container{
+.no-suggestioons .s_container {
     border-bottom-left-radius: var(--radius-3xl);
     border-bottom-right-radius: var(--radius-3xl);
 }
@@ -91,6 +92,7 @@
 
 #suggestions-list a span {
     color: var(--foreground50);
+    transition: color 0.3s ease-in-out;
 }
 
 #suggestions-list a span:last-of-type {
@@ -103,10 +105,16 @@
     margin-top: -3px;
 }
 
-#suggestions-list a:hover,
-#suggestions-list a:focus {
+#suggestions-list a:not(.no-link):hover,
+#suggestions-list a:not(.no-link):focus {
     outline: 0;
-    background: var(--foreground25);
+    background: var(--background50);
+    text-align: var(--foreground100);
+}
+
+#suggestions-list a:not(.no-link):hover span,
+#suggestions-list a:not(.no-link):focus span {
+    color: var(--foreground100);
 }
 
 #suggestions-list a:hover span:last-of-type,
@@ -139,4 +147,146 @@
 
 #suggestions-list a.loading span:last-of-type {
     display: none;
+}
+
+
+
+
+/* --------------------------------------- theme switcher trigger */
+.themeToggle {
+    background-color: transparent;
+    border: 0;
+    padding: var(--space-xxs) 0;
+    cursor: pointer;
+    border-bottom: 1px solid transparent;
+}
+
+.language-switcher button:hover,
+.language-switcher button.active {
+    border-bottom: 1px solid var(--foreground100);
+    height: 1;
+}
+
+.themeToggle svg {
+    width: 16px;
+    height: 16px;
+}
+
+
+.themeToggle svg * {
+    color: var(--background100);
+}
+
+.themeToggle {
+    width: 18px;
+    height: 18px;
+    position: relative;
+    display: inline-block;
+    padding: 0;
+    border-bottom: 0;
+    line-height: 0;
+    vertical-align: middle;
+}
+
+.sunMoonThemeToggleBtn {
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
+    margin-top: -1px;
+}
+
+.sunMoonThemeToggleBtn .themeToggleInput {
+    opacity: 0;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.sunMoonThemeToggleBtn svg {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.4s ease;
+    transform: rotate(40deg);
+}
+
+.sunMoonThemeToggleBtn svg .sunMoon {
+    transform-origin: center center;
+    transition: inherit;
+    transform: scale(1);
+}
+
+.sunMoonThemeToggleBtn svg .sunRay {
+    transform-origin: center center;
+    transform: scale(0);
+}
+
+.sunMoonThemeToggleBtn svg mask>circle {
+    transition: transform 0.64s cubic-bezier(0.41, 0.64, 0.32, 1.575);
+    transform: translate(0px, 0px);
+}
+
+.sunMoonThemeToggleBtn svg .sunRay2 {
+    animation-delay: 0.05s !important;
+}
+
+.sunMoonThemeToggleBtn svg .sunRay3 {
+    animation-delay: 0.1s !important;
+}
+
+.sunMoonThemeToggleBtn svg .sunRay4 {
+    animation-delay: 0.17s !important;
+}
+
+.sunMoonThemeToggleBtn svg .sunRay5 {
+    animation-delay: 0.25s !important;
+}
+
+.sunMoonThemeToggleBtn svg .sunRay6 {
+    animation-delay: 0.29s !important;
+}
+
+.sunMoonThemeToggleBtn .themeToggleInput:checked+svg {
+    transform: rotate(90deg);
+}
+
+.sunMoonThemeToggleBtn .themeToggleInput:checked+svg mask>circle {
+    transform: translate(16px, -3px);
+}
+
+.sunMoonThemeToggleBtn .themeToggleInput:checked+svg .sunMoon {
+    transform: scale(0.55);
+}
+
+.sunMoonThemeToggleBtn .themeToggleInput:checked+svg .sunRay {
+    animation: showRay 0.4s ease 0s 1 forwards;
+}
+
+@keyframes showRay {
+    0% {
+        transform: scale(0);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+body:not(.dark) .sunMoonThemeToggleBtn svg .sunMoon {
+    fill: var(--yellow);
+}
+
+body:not(.dark) .sunMoonThemeToggleBtn svg .sunRay {
+    fill: var(--yellow);
+}
+
+body.dark .sunMoonThemeToggleBtn svg .sunMoon {
+    fill: var(--foreground100);
+}
+
+body.dark .sunMoonThemeToggleBtn svg .sunRay {
+    fill: var(--yellow);
 }

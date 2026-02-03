@@ -65,8 +65,32 @@
       </section>
 
       <!-- settings -->
-      <section></section>
+      <section class="fixed h-screen right-0 top-0 z-50 pr-4 pt-4 flex gap-4">
+        <!-- Settings panel trigger -->
+        <button
+          id="settings-trigger"
+          class="icon-btn [&_svg]:w-6 w-9 p-0! flex justify-center **:stroke-(--foreground50) hover:**:stroke-(--foreground100)"
+          data-icon="settings"
+          aria-label="settings"
+        ></button>
+      </section>
+    <!-- settings pnael overlay -->
+    <div
+      id="settings-overlay"
+      class="absolute w-full h-full inset-0 backdrop-blur-xs z-50 hidden"
+    ></div>
+    <section
+      id="settings-panel"
+      class="h-screen overflow-y-auto fixed top-0 right-0 z-50 min-w-sm bg-(--background100) border-l-(--foreground25) border-l p-8 transition-transform duration-500 translate-x-full"
+    >
+      <header class="flex items-center gap-4 justify-between">
+        <h2 class="text-xl!">Settings</h2>
+        <button id="settings-close-btn" tabindex="-1" class="text-center">x</button>
+      </header>
+
+    </section>
     </main>
+
     <script type="module" src="./src/js/main.js"></script>
   </body>
 </html>

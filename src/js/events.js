@@ -9,6 +9,24 @@ export const setupGlobalListeners = (engines, settings) => {
     const searchBtn = document.querySelector("#search-btn");
     const focusedSearchContainerClassName = 'active-search-container';
     const suggestionsList = document.querySelector("#suggestions-list");
+    const settingsOpenBtn = document.querySelector("#settings-trigger");
+    const settingsPanel = document.querySelector("#settings-panel");
+    const settingsOverlay = document.querySelector("#settings-overlay");
+    const settingsCloseBtn = document.querySelector("#settings-close-btn");
+    const settingsPanelTriggers = [
+        {
+            el: settingsOpenBtn,
+            condition: false
+        },
+        {
+            el: settingsOverlay,
+            condition: true
+        },
+        {
+            el: settingsCloseBtn,
+            condition: true
+        },
+    ];
 
     /*
         Toggle search engines list's appearence
@@ -48,6 +66,7 @@ export const setupGlobalListeners = (engines, settings) => {
         if (e.key === 'Escape') {
             toggleClassName(searchEnginesList, 'hidden', 1);
             toggleClassName(searchContainer, focusedSearchContainerClassName, -1);
+            togglesettingsPanel(settingsPanel, settingsOverlay, true);
         };
 
         // Focus on the search input
@@ -68,7 +87,6 @@ export const setupGlobalListeners = (engines, settings) => {
     */
     searchInput.addEventListener('input', () => {
         toggleClassName(searchContainer, focusedSearchContainerClassName, 1);
-        
         // set a border radius to the container when there is no value in the input and with no value there is no suggestions there for there is no need to remove border radius
         const value = searchInput.value.trim();
         if (!value) {
@@ -104,4 +122,24 @@ export const setupGlobalListeners = (engines, settings) => {
         if (!link) return;
         link.classList.add("loading"); // show loading icon
     });
+
+    settingsPanelTriggers.forEach((trigger) => {
+        trigger.el.addEventListener('click', () => {
+            togglesettingsPanel(settingsPanel, settingsOverlay, trigger.condition);
+        });
+    });
 };
+
+const togglesettingsPanel = (settingsPanel, settingsOverlay, condition) => {
+    document.body.classList.toggle('overflow-hidden', condition);
+    settingsPanel.classList.toggle('translate-x-full', condition);
+    settingsOverlay.classList.toggle('hidden', condition);
+    const settingsBtns = settingsPanel.querySelectorAll('button');
+    settingsBtns.forEach((btn) => {
+        if (condition) {
+            btn.setAttribute("tabindex", "-1");
+        } else {
+            btn.removeAttribute("tabindex");
+        }
+    });
+}
