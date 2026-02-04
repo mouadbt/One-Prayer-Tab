@@ -387,10 +387,6 @@
     --tw-duration: 500ms;
     transition-duration: 500ms;
   }
-  .duration-700 {
-    --tw-duration: 700ms;
-    transition-duration: 700ms;
-  }
   .\*\*\:stroke-\(--foreground50\) {
     :is(& *) {
       stroke: var(--foreground50);
@@ -607,13 +603,9 @@
 .active-search-container {
   transform: translateY(-10rem);
 }
-.active-search-container .s_container {
+.with-suggestions .s_container {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
-}
-.no-suggestioons .s_container {
-  border-bottom-left-radius: var(--radius-3xl);
-  border-bottom-right-radius: var(--radius-3xl);
 }
 #suggestions-list {
   width: 100%;

@@ -1,4 +1,4 @@
-import { fetchData } from './utils.js';
+import { fetchData, toggleClassName } from './utils.js';
 import { buildTheSvgIcon } from './ui.js';
 
 const isFirefox = typeof browser !== 'undefined';
@@ -6,7 +6,7 @@ const isFirefox = typeof browser !== 'undefined';
 // the function that start executing after the user start typing and holds all the logic from getting the suggestions tell going to the user's destination
 export const initSuggestionsLogic = () => {
     const searchInput = document.querySelector("#search-input");
-    const searchBtn = document.querySelector("#search-btn");
+    const searchContainer = document.querySelector("#search-container");
     const suggestionsList = document.querySelector("#suggestions-list");
 
     searchInput.addEventListener("input", (e) => {
@@ -15,11 +15,11 @@ export const initSuggestionsLogic = () => {
             clearSuggestions(suggestionsList);
             return;
         }
-        showSuggestions(query, suggestionsList);
+        showSuggestions(query, suggestionsList, searchContainer);
     });
 };
 
-const showSuggestions = async (query, suggestionsList) => {
+const showSuggestions = async (query, suggestionsList, searchContainer) => {
 
     // Check if browser APIs are available
     const hasTopSites = (isFirefox && typeof browser !== 'undefined'
@@ -62,6 +62,9 @@ const showSuggestions = async (query, suggestionsList) => {
 
     // Display the suggestions.
     renderSuggestionItems(combined.slice(0, 6), suggestionsList);
+
+    // handle border radius of the search container to be 0 if there is suggestions and unset it if there is no suggestions
+    handleSearchContainerRadius(combined, searchContainer);
 };
 
 // show the suggestions in the suggestions list when user start typing
@@ -155,3 +158,18 @@ const getFaviconUrl = (origin) => {
 const clearSuggestions = (suggestionsList) => {
     suggestionsList.innerHTML = '';
 };
+
+const handleSearchContainerRadius = (suggestions, searchContainer) => {     
+    console.log(suggestions.length);
+    if (suggestions.length === 0) {
+        console.log('no suggestions remov  the classname: with-suggestions');
+        toggleClassName(searchContainer, 'with-suggestions', -1);
+    } else {
+        console.log('suggestions add the classname: with-suggestions');
+        toggleClassName(searchContainer, 'with-suggestions', 1);
+    }
+};
+
+
+
+

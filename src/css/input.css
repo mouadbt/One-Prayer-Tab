@@ -39,14 +39,9 @@
     transform: translateY(-10rem);
 }
 
-.active-search-container .s_container {
+.with-suggestions .s_container {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
-}
-
-.no-suggestioons .s_container {
-    border-bottom-left-radius: var(--radius-3xl);
-    border-bottom-right-radius: var(--radius-3xl);
 }
 
 

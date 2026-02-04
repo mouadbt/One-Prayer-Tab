@@ -1,3 +1,4 @@
+import { performSearch } from './search.js';
 import { handleEngineSelect } from './settings.js';
 import { toggleClassName } from './utils.js';
 
@@ -33,19 +34,7 @@ export const setupGlobalListeners = (engines, settings) => {
         and handle focus
     */
     searchEnginesListTrigger.addEventListener('click', () => {
-        // show or hide the search engines lists
-        toggleClassName(searchEnginesList, 'hidden', 0);
-
-        // focus on the first searach engine element when list is displayed or on the trigger if it hidden 
-        if (!searchEnginesList.classList.contains('hidden')) {
-            const firstSearchEngineEl = searchEnginesList.querySelector('button');
-            if (!firstSearchEngineEl) {
-                return
-            }
-            firstSearchEngineEl.focus();
-        } else {
-            searchEnginesListTrigger.focus();
-        }
+        handleEnginesListAppearence(searchEnginesList, searchEnginesListTrigger);
     });
 
     /*
@@ -86,14 +75,7 @@ export const setupGlobalListeners = (engines, settings) => {
         when start typing set the search container as the main primary widget
     */
     searchInput.addEventListener('input', () => {
-        toggleClassName(searchContainer, focusedSearchContainerClassName, 1);
-        // set a border radius to the container when there is no value in the input and with no value there is no suggestions there for there is no need to remove border radius
-        const value = searchInput.value.trim();
-        if (!value) {
-            toggleClassName(searchContainer, 'no-suggestioons', 1);
-        } else {
-            toggleClassName(searchContainer, 'no-suggestioons', -1);
-        }
+        handleSearchContainerFocusing(searchContainer, focusedSearchContainerClassName, searchInput);
     });
 
     /*
@@ -123,6 +105,7 @@ export const setupGlobalListeners = (engines, settings) => {
         link.classList.add("loading"); // show loading icon
     });
 
+    // Handle setttings panel appearing
     settingsPanelTriggers.forEach((trigger) => {
         trigger.el.addEventListener('click', () => {
             togglesettingsPanel(settingsPanel, settingsOverlay, trigger.condition);
@@ -142,4 +125,34 @@ const togglesettingsPanel = (settingsPanel, settingsOverlay, condition) => {
             btn.removeAttribute("tabindex");
         }
     });
+};
+
+const handleEnginesListAppearence = (searchEnginesList, searchEnginesListTrigger) => {
+
+    // show or hide the search engines lists
+    toggleClassName(searchEnginesList, 'hidden', 0);
+
+    // focus on the first searach engine element when list is displayed or on the trigger if it hidden 
+    if (!searchEnginesList.classList.contains('hidden')) {
+        const firstSearchEngineEl = searchEnginesList.querySelector('button');
+        if (!firstSearchEngineEl) {
+            return
+        }
+        firstSearchEngineEl.focus();
+    } else {
+        searchEnginesListTrigger.focus();
+    }
+
+};
+
+const handleSearchContainerFocusing = (searchContainer, focusedSearchContainerClassName, searchInput) => {
+    toggleClassName(searchContainer, focusedSearchContainerClassName, 1);
+
+    // set a border radius to the container when there is no value in the input and with no value there is no suggestions there for there is no need to remove border radius
+    const value = searchInput.value.trim();
+    if (value) {
+        toggleClassName(searchContainer, 'with-suggestions', 1);
+    } else {
+        toggleClassName(searchContainer, 'with-suggestions', -1);
+    }
 }
