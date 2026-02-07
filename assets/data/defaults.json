@@ -49,5 +49,13 @@
       "preferred": false,
       "url": "https://chat.openai.com/?q="
     }
+  ],
+  "settingsOptions": [
+    {
+      "label": "Focus search bar on new tab",
+      "active": true,
+      "key": "focusOnLoad",
+      "regular": true
+    }
   ]
 }

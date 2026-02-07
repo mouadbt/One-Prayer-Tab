@@ -8,18 +8,42 @@
   </head>
   <body class="bg-(--background100)">
     <main
-      class="min-h-screen max-w-7xl mx-auto [&_button]:flex [&_button]:gap-1 [&_button]:items-center [&_.btn]:border [&_button]:border-(--foreground25) [&_button]:text-sm [&_button]:min-h-9 [&_button]:min-w-9 [&_.btn]:py-1 [&_button]:outline-offset-1 [&_button]:focus-visible:outline-2 [&_button]:focus-visible:outline-(--foreground50) [&_button]:h-9 [&_button]:select-none [&_button]:rounded-2xl [&_button]:px-2.5"
+      class="min-h-screen flex items-center justify-center max-w-7xl mx-auto [&_button]:flex [&_button]:gap-1 [&_button]:items-center [&_.btn]:border [&_button]:border-(--foreground25) [&_button]:text-sm [&_button]:min-h-9 [&_button]:min-w-9 [&_.btn]:py-1 [&_button]:outline-offset-1 [&_button]:focus-visible:outline-2 [&_button]:focus-visible:outline-(--foreground50) [&_button]:h-9 [&_button]:select-none [&_button]:rounded-2xl [&_button]:px-2.5"
     >
       <!-- widgets -->
-      <section></section>
+      <section class="w-full max-w-4xl space-y-4">
+        <div class="grid grid-cols-2 grid-rows-2 gap-4 items-stretch">
+          <div id="ayah" class="widget bg-green-400 row-span-3 min-h-36">
+            ayah
+          </div>
+          <div
+            id="weather"
+            class="widget relative flex h-full flex-1 flex-col justify-between px-8 rounded-4xl after:w-full after:h-full after:absolute after:inset-0 after:bg-(--background100) after:opacity-50 **:z-50 min-h-52 py-6"
+          >
+            <span class="text-sm-strong">Casablanca</span>
+            <div class="flex justify-between gap-2">
+              <span class="flex text-4xl!">59°</span>
+              <div class="flex flex-col items-end text-sm">
+                <span>Light rain showers</span>
+                <div class="flex gap-3">
+                  <span class="text-sm!">H 63°</span
+                  ><span class="text-sm!">L 58°</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="todo" class="widget bg-green-400">todo</div>
+        </div>
+        <div id="prayers" class="widget bg-green-400">prayers</div>
+      </section>
 
       <!-- Search widget -->
       <section class="w-full fixed bottom-12 flex justify-center left-0">
         <section
           id="search-container"
-          class="transition-transform duration-500 bg-(--background50) p-1 rounded-3xl w-11/12 max-w-6xl"
+          class="transition-transform duration-500 bg-(--background50) p-1 rounded-4xl w-11/12 max-w-4xl"
         >
-          <div class="bg-(--background100) px-2 rounded-[20px] s_container">
+          <div class="bg-(--background100) px-2 rounded-4xl s_container">
             <input
               type="text"
               id="search-input"
@@ -74,20 +98,23 @@
           aria-label="settings"
         ></button>
       </section>
-    <!-- settings pnael overlay -->
-    <div
-      id="settings-overlay"
-      class="absolute w-full h-full inset-0 backdrop-blur-xs z-50 hidden"
-    ></div>
-    <section
-      id="settings-panel"
-      class="h-screen overflow-y-auto fixed top-0 right-0 z-50 min-w-sm bg-(--background100) border-l-(--foreground25) border-l p-8 transition-transform duration-500 translate-x-full"
-    >
-      <header class="flex items-center gap-4 justify-between">
-        <h2 class="text-xl!">Settings</h2>
-        <button id="settings-close-btn" tabindex="-1" class="text-center">x</button>
-      </header>
-    </section>
+      <!-- settings pnael overlay -->
+      <div
+        id="settings-overlay"
+        class="absolute w-full h-full inset-0 backdrop-blur-xs z-50 hidden"
+      ></div>
+      <section
+        id="settings-panel"
+        class="h-screen overflow-y-auto fixed top-0 right-0 z-50 min-w-sm bg-(--background100) border-l-(--foreground25) border-l p-8 transition-transform duration-500 translate-x-full"
+      >
+        <header class="flex items-center gap-4 justify-between">
+          <h2 class="text-xl!">Settings</h2>
+          <button id="settings-close-btn" tabindex="-1" class="text-center">
+            x
+          </button>
+        </header>
+        <ul id="settings-options" class="pt-8"></ul>
+      </section>
     </main>
 
     <script type="module" src="./src/js/main.js"></script>

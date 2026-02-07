@@ -1,7 +1,8 @@
 import { performSearch } from './search.js';
-import { handleEngineSelect } from './settings.js';
 import { toggleClassName } from './utils.js';
-
+import { saveData } from './utils.js';
+import { renderEngines } from './ui.js';
+import { handleSettingChange } from './settings.js';
 export const setupGlobalListeners = (engines, settings) => {
     const searchEnginesListTrigger = document.querySelector('#search-engines-list-trigger');
     const searchEnginesList = document.querySelector('#search-engines-list');
@@ -55,7 +56,7 @@ export const setupGlobalListeners = (engines, settings) => {
         if (e.key === 'Escape') {
             toggleClassName(searchEnginesList, 'hidden', 1);
             toggleClassName(searchContainer, focusedSearchContainerClassName, -1);
-            togglesettingsPanel(settingsPanel, settingsOverlay, true);
+            togglesettingsPanel(settingsPanel, settingsOverlay, settingsOpenBtn, true);
         };
 
         // Focus on the search input
@@ -68,6 +69,10 @@ export const setupGlobalListeners = (engines, settings) => {
         if (e.key === 'Enter' && e.target === searchInput) {
             const query = e.target.value.trim().toLowerCase();
             performSearch(query, engines);
+        };
+
+        if (e.altKey && e.key.toLowerCase() === 's') {
+            togglesettingsPanel(settingsPanel, settingsOverlay, settingsOpenBtn, trigger.condition);
         };
     });
 
@@ -108,12 +113,39 @@ export const setupGlobalListeners = (engines, settings) => {
     // Handle setttings panel appearing
     settingsPanelTriggers.forEach((trigger) => {
         trigger.el.addEventListener('click', () => {
-            togglesettingsPanel(settingsPanel, settingsOverlay, trigger.condition);
+            togglesettingsPanel(settingsPanel, settingsOverlay, settingsOpenBtn, trigger.condition);
+        });
+    });
+
+    // settings and search engines change handlers
+    const delegatedSettings = [
+        {
+            container: "#settings-options",
+            callback: handleSettingChange,
+            store: settings
+        }
+    ];
+
+    // attach listeners to each container
+    delegatedSettings.forEach(({ container, callback, store }) => {
+        const el = document.querySelector(container);
+        if (!el) return;
+        el.addEventListener('change', (e) => {
+            if (e.target.tagName === 'INPUT') {
+                callback(e.target.id, e.target.checked, store);
+            }
+        });
+        el.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                const input = e.target.querySelector('input');
+                input.checked = !input.checked;
+                callback(input.id, input.checked, store);
+            }
         });
     });
 };
 
-const togglesettingsPanel = (settingsPanel, settingsOverlay, condition) => {
+const togglesettingsPanel = (settingsPanel, settingsOverlay, settingsOpenBtn, condition) => {
     document.body.classList.toggle('overflow-hidden', condition);
     settingsPanel.classList.toggle('translate-x-full', condition);
     settingsOverlay.classList.toggle('hidden', condition);
@@ -121,7 +153,9 @@ const togglesettingsPanel = (settingsPanel, settingsOverlay, condition) => {
     settingsBtns.forEach((btn) => {
         if (condition) {
             btn.setAttribute("tabindex", "-1");
+            settingsOpenBtn.focus();
         } else {
+            settingsBtns[0].focus();
             btn.removeAttribute("tabindex");
         }
     });
@@ -155,4 +189,28 @@ const handleSearchContainerFocusing = (searchContainer, focusedSearchContainerCl
     } else {
         toggleClassName(searchContainer, 'with-suggestions', -1);
     }
-}
+};
+
+//  Update the search engines list to set the selected engine as pref erred and ensure it's active
+const handleEngineSelect = (key, engines, parent, input) => {
+    // Find the engine that was clicked
+    const clickedEngine = engines.find(e => e.key === key);
+
+    // If the clicked engine is not active (not checked in settings), make it active
+    if (clickedEngine && !clickedEngine.active) {
+        clickedEngine.active = true;
+    }
+
+    // Set the clicked engine as preferred (active in the UI)
+    const updated = engines.map(e => ({
+        ...e,
+        preferred: e.key === key,
+        active: e.key === key ? true : e.active
+    }));
+    saveData('searchEngines', updated);
+    renderEngines(updated);
+
+    // hide the list and focus again on the triger
+    parent.classList.add('hidden');
+    input.focus();
+};

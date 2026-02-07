@@ -35,14 +35,14 @@ export const switchTheme = (isChecked) => {
 };
 
 // Focus the cursor on the search input and override the browser's default behavior of focusing the address bar
-export const focusOnSearchInput = (inputEl) => {
+export const focusOnSearchInput = (inputEl) => {                   
     inputEl.focus();
     if (location.search !== "?focus") {
-        location.search = "?focus";
-        throw new Error("Redirecting to focus mode");
-    }
+        location.search = "?focus";   
+        throw new Error("Redirecting to focus mode");   
+    }              
 };
-
+                                   
 // Toggle classname of the element
 export const toggleClassName = (el, className, addOrRemove) => {
     switch (addOrRemove) {

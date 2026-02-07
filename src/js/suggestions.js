@@ -159,17 +159,11 @@ const clearSuggestions = (suggestionsList) => {
     suggestionsList.innerHTML = '';
 };
 
-const handleSearchContainerRadius = (suggestions, searchContainer) => {     
-    console.log(suggestions.length);
+const handleSearchContainerRadius = (suggestions, searchContainer) => {
     if (suggestions.length === 0) {
-        console.log('no suggestions remov  the classname: with-suggestions');
         toggleClassName(searchContainer, 'with-suggestions', -1);
     } else {
-        console.log('suggestions add the classname: with-suggestions');
         toggleClassName(searchContainer, 'with-suggestions', 1);
     }
 };
-
-
-
 
