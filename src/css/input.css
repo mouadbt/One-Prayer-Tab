@@ -8,6 +8,7 @@
     --foreground50: oklab(100% 0 0/0.5);
     --foreground75: oklab(100% 0 0/0.75);
     --foreground100: oklab(100% 0 0);
+    --yellow: oklab(78.835% 0.02602 0.15679);
 
     --space-xxxs: 0.25rem;
     --space-xxs: 0.5rem;
@@ -24,6 +25,7 @@
     --font-family-base: 'CozetteVector';
 
     --clip-path-squircle: calc(100% - 29.3483px) 8.5535px, calc(100% - 22.7266px) 12.4338px, calc(100% - 17.1307px) 17.1307px, calc(100% - 12.4338px) 22.7266px, calc(100% - 8.5535px) 29.3483px, calc(100% - 5.4349px) 37.2031px, calc(100% - 3.041px) 46.6584px, calc(100% - 1.3466px) 58.4648px, calc(100% - .3359px) 74.6528px, 100% 120px, 100% calc(100% - 120px), calc(100% - .3359px) calc(100% - 74.6528px), calc(100% - 1.3466px) calc(100% - 58.4648px), calc(100% - 3.041px) calc(100% - 46.6584px), calc(100% - 5.4349px) calc(100% - 37.2031px), calc(100% - 8.5535px) calc(100% - 29.3483px), calc(100% - 12.4338px) calc(100% - 22.7266px), calc(100% - 17.1307px) calc(100% - 17.1307px), calc(100% - 22.7266px) calc(100% - 12.4338px), calc(100% - 29.3483px) calc(100% - 8.5535px), calc(100% - 37.2031px) calc(100% - 5.4349px), calc(100% - 46.6584px) calc(100% - 3.041px), calc(100% - 58.4648px) calc(100% - 1.3466px), calc(100% - 74.6528px) calc(100% - .3359px), calc(100% - 120px) 100%, 120px 100%, 74.6528px calc(100% - .3359px), 58.4648px calc(100% - 1.3466px), 46.6584px calc(100% - 3.041px), 37.2031px calc(100% - 5.4349px), 29.3483px calc(100% - 8.5535px), 22.7266px calc(100% - 12.4338px), 17.1307px calc(100% - 17.1307px), 12.4338px calc(100% - 22.7266px), 8.5535px calc(100% - 29.3483px), 5.4349px calc(100% - 37.2031px), 3.041px calc(100% - 46.6584px), 1.3466px calc(100% - 58.4648px), .3359px calc(100% - 74.6528px), 0px calc(100% - 120px), 0px calc(100% - 120px), 0px calc(92.3077% - 101.5385px), 0px calc(84.6154% - 83.0769px), 0px calc(76.9231% - 64.6154px), 0px calc(69.2308% - 46.1538px), 0px calc(61.5385% - 27.6923px), 0px calc(53.8462% - 9.2308px), 0px calc(46.1538% + 9.2308px), 0px calc(38.4615% + 27.6923px), 0px calc(30.7692% + 46.1538px), 0px calc(23.0769% + 64.6154px), 0px calc(15.3846% + 83.0769px), 0px calc(7.6923% + 101.5385px), 0px 120px;
+
 
 }
 
@@ -352,12 +354,285 @@ body.dark .sunMoonThemeToggleBtn svg .sunRay {
 
 
 /*                                                */
-.widget{
-    clip-path:var(--clip-path-squircle);
+.widget {
+    clip-path: var(--clip-path-squircle);
 }
-#weather{
-    background: url('../../assets/images/weather/Night\ +\ Storm.jpeg');
+
+#weather {
+    background: url('../../assets/images/weather/Afternoon + Storm.jpeg');
     background-size: cover;
     background-position: center;
     /* backdrop-filter: blur(4px); */
+}
+
+
+
+
+/* --------------------------------------- To do list */
+.task-entry {
+    --check: var(--yellow);
+    display: grid;
+    grid-template-columns: 30px auto 30px;
+    align-items: center;
+    padding: 8px 0;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.task-entry .task-text-label {
+    position: relative;
+    cursor: pointer;
+    display: grid;
+    align-items: center;
+    width: fit-content;
+    transition: color 0.3s ease;
+    font-size: 16px;
+    font-weight: 400;
+    user-select: none;
+    max-width: 500px;
+    word-break: break-all;
+}
+
+.task-entry .task-text-label::before {
+    content: "";
+    position: absolute;
+    height: 2px;
+    width: 8px;
+    left: -27px;
+    background: var(--check);
+    border-radius: 2px;
+    transition: background 0.3s ease;
+}
+
+.task-entry .task-text-label::after {
+    content: "";
+    position: absolute;
+    height: 4px;
+    width: 4px;
+    top: 8px;
+    left: -25px;
+    border-radius: 50%;
+}
+
+.task-entry .task-toggle-box {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    position: relative;
+    height: 15px;
+    width: 15px;
+    outline: none;
+    border: 0;
+    margin: 0 15px 0 0;
+    cursor: pointer;
+    display: grid;
+    align-items: center;
+}
+
+.task-entry .task-toggle-box::before,
+.task-entry .task-toggle-box::after {
+    content: "";
+    position: absolute;
+    height: 2px;
+    top: auto;
+    background: var(--check);
+    border-radius: 2px;
+}
+
+.task-entry .task-toggle-box::before {
+    width: 0px;
+    right: 60%;
+    transform-origin: right bottom;
+}
+
+.task-entry .task-toggle-box::after {
+    width: 0px;
+    left: 40%;
+    transform-origin: left bottom;
+}
+
+.task-entry .task-toggle-box:checked::before {
+    animation: task-check-stroke-one 0.4s ease forwards;
+}
+
+.task-entry .task-toggle-box:checked::after {
+    animation: task-check-stroke-two 0.4s ease forwards;
+}
+
+.task-entry .task-toggle-box:checked+.task-text-label {
+    color: var(--foreground50);
+    animation: task-text-shift 0.3s ease 0.1s forwards;
+}
+
+.task-entry .task-toggle-box:checked+.task-text-label::before {
+    background: var(--foreground50);
+    animation: task-strike-through 0.4s ease forwards;
+}
+
+.task-entry .task-toggle-box:checked+.task-text-label::after {
+    animation: task-celebration-burst 0.5s ease forwards 0.1s;
+}
+
+.task-remove-action {
+    width: 20px !important;
+    min-width: 20px !important;
+    min-height: 20px !important;
+    height: 20px !important;
+    background: none;
+    border: none;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 0;
+    padding-bottom: 3px;
+    line-height: 1.7;
+}
+
+.task-remove-action:hover {
+    color: #ff4757;
+    background: rgba(255, 71, 87, 0.1);
+}
+
+.task-entry:hover .task-remove-action {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.task-entry.task-fade-out {
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.3s ease;
+}
+
+@keyframes task-text-shift {
+    50% {
+        padding-left: 8px;
+        padding-right: 0px;
+    }
+
+    100% {
+        padding-right: 4px;
+    }
+}
+
+@keyframes task-strike-through {
+    60% {
+        width: 100%;
+        left: 4px;
+    }
+
+    100% {
+        width: 100%;
+        left: -2px;
+        padding-left: 0;
+    }
+}
+
+@keyframes task-check-stroke-one {
+    0% {
+        width: 4px;
+        top: auto;
+        transform: rotate(0);
+    }
+
+    50% {
+        width: 0px;
+        top: auto;
+        transform: rotate(0);
+    }
+
+    51% {
+        width: 0px;
+        top: 8px;
+        transform: rotate(45deg);
+    }
+
+    100% {
+        width: 5px;
+        top: 8px;
+        transform: rotate(45deg);
+    }
+}
+
+@keyframes task-check-stroke-two {
+    0% {
+        width: 4px;
+        top: auto;
+        transform: rotate(0);
+    }
+
+    50% {
+        width: 0px;
+        top: auto;
+        transform: rotate(0);
+    }
+
+    51% {
+        width: 0px;
+        top: 8px;
+        transform: rotate(-45deg);
+    }
+
+    100% {
+        width: 10px;
+        top: 8px;
+        transform: rotate(-45deg);
+    }
+}
+
+@keyframes task-celebration-burst {
+    0% {
+        opacity: 1;
+        box-shadow: 0 0 0 -2px var(--yellow), 0 0 0 -2px var(--yellow), 0 0 0 -2px var(--yellow), 0 0 0 -2px var(--yellow), 0 0 0 -2px var(--yellow), 0 0 0 -2px var(--yellow);
+    }
+
+    30% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        box-shadow: 0 -15px 0 0px var(--yellow), 14px -8px 0 0px var(--yellow), 14px 8px 0 0px var(--yellow), 0 15px 0 0px var(--yellow), -14px 8px 0 0px var(--yellow), -14px -8px 0 0px var(--yellow);
+    }
+}
+
+.task-input-zone {
+    display: grid;
+    grid-template-columns: 30px auto;
+    align-items: center;
+}
+
+.task-input-zone .task-text-field {
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    font-family: inherit;
+    width: 100%;
+}
+
+.task-input-zone .task-text-field::placeholder {
+    color: #666;
+}
+
+.task-input-zone .task-ghost-checkbox {
+    width: 15px;
+    height: 15px;
+    margin-right: 15px;
+    border: 1px solid #666;
+    border-radius: 2px;
+    background: transparent;
+}
+
+#task-collection{
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+#task-collection::-webkit-scrollbar {
+    display: none;
 }

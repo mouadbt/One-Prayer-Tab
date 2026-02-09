@@ -3,6 +3,8 @@ import { toggleClassName } from './utils.js';
 import { saveData } from './utils.js';
 import { renderEngines } from './ui.js';
 import { handleSettingChange } from './settings.js';
+import { handleAddNewTask } from './todo.js';
+
 export const setupGlobalListeners = (engines, settings) => {
     const searchEnginesListTrigger = document.querySelector('#search-engines-list-trigger');
     const searchEnginesList = document.querySelector('#search-engines-list');
@@ -29,6 +31,7 @@ export const setupGlobalListeners = (engines, settings) => {
             condition: true
         },
     ];
+    const newTaskInput = document.querySelector("#nexusTaskNewInput");
 
     /*
         Toggle search engines list's appearence
@@ -73,6 +76,11 @@ export const setupGlobalListeners = (engines, settings) => {
 
         if (e.altKey && e.key.toLowerCase() === 's') {
             togglesettingsPanel(settingsPanel, settingsOverlay, settingsOpenBtn, trigger.condition);
+        };
+
+        // Add new task
+        if (e.key === 'Enter' && e.target === newTaskInput) {
+            handleAddNewTask(newTaskInput);
         };
     });
 

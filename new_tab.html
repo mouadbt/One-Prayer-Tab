@@ -11,16 +11,50 @@
       class="min-h-screen flex items-center justify-center max-w-7xl mx-auto [&_button]:flex [&_button]:gap-1 [&_button]:items-center [&_.btn]:border [&_button]:border-(--foreground25) [&_button]:text-sm [&_button]:min-h-9 [&_button]:min-w-9 [&_.btn]:py-1 [&_button]:outline-offset-1 [&_button]:focus-visible:outline-2 [&_button]:focus-visible:outline-(--foreground50) [&_button]:h-9 [&_button]:select-none [&_button]:rounded-2xl [&_button]:px-2.5"
     >
       <!-- widgets -->
-      <section class="w-full max-w-4xl space-y-4">
+      <section
+        class="w-full max-w-4xl space-y-4 [&_.widget]:px-8 [&_.widget]:rounded-4xl [&_.widget]:after:rounded-4xl [&_.widget]:after:w-full [&_.widget]:after:h-full [&_.widget]:after:absolute [&_.widget]:after:inset-0 [&_.widget]:after:bg-(--background100) [&_.widget]:after:opacity-50 [&_.widget]:**:relative [&_.widget]:**:z-10 [&_.widget]:py-6 [&_.widget]:relative [&_.widget]:[&_h3]:text-xl!"
+      >
         <div class="grid grid-cols-2 grid-rows-2 gap-4 items-stretch">
-          <div id="ayah" class="widget bg-green-400 row-span-3 min-h-36">
-            ayah
+          
+          <!-- To do tasks -->
+          <div
+            id="todo"
+            class="widget pb-0! flex flex-col row-span-3 overflow-hidden"
+          >
+            <img
+              src="./assets/images/weather/Night + Storm.jpeg"
+              alt=""
+              class="absolute! w-full h-full inset-0 opacity-25 blur-sm"
+            />
+            <h3 class="mb-4">Tasks</h3>
+            <div id="todos-items" class="h-full pb-6">
+              <!-- List of created tasks -->
+              <div
+                class="flex flex-col gap-2 max-h-76 overflow-y-auto"
+                id="task-collection"
+              ></div>
+              <!-- Input to add new task -->
+              <div
+                class="task-input-zone absolute! bottom-6 left-0 w-full pt-2 border-tt border-(--foreground25)"
+                id="task-input-container"
+              >
+                <div class="task-ghost-checkbox"></div>
+                <input
+                  type="text"
+                  class="task-text-field"
+                  id="nexusTaskNewInput"
+                  placeholder="Add a new task..."
+                />
+              </div>
+            </div>
           </div>
+
+          <!-- Weather -->
           <div
             id="weather"
-            class="widget relative flex h-full flex-1 flex-col justify-between px-8 rounded-4xl after:w-full after:h-full after:absolute after:inset-0 after:bg-(--background100) after:opacity-50 **:z-50 min-h-52 py-6"
+            class="widget flex h-full flex-1 flex-col justify-between row-span-1"
           >
-            <span class="text-sm-strong">Casablanca</span>
+            <h3 class="">Casablanca</h3>
             <div class="flex justify-between gap-2">
               <span class="flex text-4xl!">59°</span>
               <div class="flex flex-col items-end text-sm">
@@ -32,13 +66,21 @@
               </div>
             </div>
           </div>
-          <div id="todo" class="widget bg-green-400">todo</div>
+
+          <!-- Ayah -->
+          <div id="ayah" class="widget after:bg-blue-400/5! row-span-1 min-h-48">
+            <h3 class="">Today's ayah</h3>
+          </div>
         </div>
-        <div id="prayers" class="widget bg-green-400">prayers</div>
+
+        <!-- Prayers -->
+        <div id="prayers" class="widget after:bg-blue-400/5!">
+          <h3 class="">Today's Prayers</h3>
+        </div>
       </section>
 
       <!-- Search widget -->
-      <section class="w-full fixed bottom-12 flex justify-center left-0">
+      <section class="w-full fixed bottom-12 flex justify-center left-0 z-30">
         <section
           id="search-container"
           class="transition-transform duration-500 bg-(--background50) p-1 rounded-4xl w-11/12 max-w-4xl"
@@ -80,6 +122,7 @@
                 class="icon-btn [&_svg]:w-6 [&_svg]:fill-(--foreground100) rounded-full! max-w-9 p-0! justify-center"
                 data-icon="search"
                 aria-label="Search"
+                title="Click to perform search"
               ></button>
             </div>
           </div>
@@ -96,12 +139,14 @@
           class="icon-btn [&_svg]:w-6 w-9 p-0! flex justify-center **:stroke-(--foreground50) hover:**:stroke-(--foreground100)"
           data-icon="settings"
           aria-label="settings"
+          title="Click to open settings panel"
         ></button>
       </section>
       <!-- settings pnael overlay -->
       <div
         id="settings-overlay"
-        class="absolute w-full h-full inset-0 backdrop-blur-xs z-50 hidden"
+        class="absolute w-full h-full inset-0 backdrop-blur-xs z-40 hidden"
+        title="Click anywhere to close settings panel"
       ></div>
       <section
         id="settings-panel"
@@ -109,7 +154,12 @@
       >
         <header class="flex items-center gap-4 justify-between">
           <h2 class="text-xl!">Settings</h2>
-          <button id="settings-close-btn" tabindex="-1" class="text-center">
+          <button
+            id="settings-close-btn"
+            tabindex="-1"
+            class="text-center"
+            title="Click to close settings panel"
+          >
             x
           </button>
         </header>

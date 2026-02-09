@@ -4,7 +4,7 @@ import { renderEngines, renderIcons } from "./ui.js ";
 import { applyAllSettings } from "./settings.js";
 import { setupGlobalListeners } from "./events.js";
 import { initSuggestionsLogic } from "./suggestions.js";
-import { renderSettings } from "./ui.js";
+import { renderSettings, renderTasks } from "./ui.js";
 // import { renderTasks } from './ui.js';               
 
 const init = async () => {
@@ -39,11 +39,17 @@ const init = async () => {
   // Initialize suggestions logic
   initSuggestionsLogic();
 
-  // // Render TodoItems
-  // renderTasks(todoItems);
-
   // // get the Todo Items
-  // const todoItems = loadData('tasks', []);
+  const todoItems = loadData('tasks', [
+    {
+      "id": "taskItem1",
+      "text": "Your first task",
+      "done": false
+    }
+  ]);
+
+  // // Render TodoItems
+  renderTasks(todoItems);
 };
 
 // load and execute and start script after page fully load

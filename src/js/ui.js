@@ -1,3 +1,4 @@
+import { handleTodListEvents } from './todo.js';
 
 // render the settings options & search engines in the settings panel
 export const renderSettings = (settings, engines, icons) => {
@@ -95,4 +96,26 @@ const createOptionElement = (option, icons, container) => {
   liEl.appendChild(btnEl);
 
   container.appendChild(liEl);
+};
+
+// Render TodoLists in page
+export const renderTask = (task) => {
+  const taskCollection = document.querySelector("#task-collection");
+  const taskDiv = document.createElement('div');
+  taskDiv.classList.add("task-entry");
+  taskDiv.dataset.id = task.id;
+  taskDiv.innerHTML = `
+    <input type="checkbox" class="task-toggle-box" id="${task.id}" ${task.done ? "checked" : ""}>
+    <label for="${task.id}" class="task-text-label" title="Click to set done or undo it">${task.text}</label>
+    <button class="task-remove-action" data-remove="${task.id}" title="Click to remove task" tabindex="-1">×</button>
+  `;
+  taskCollection.appendChild(taskDiv);
+  return true;
+};
+
+export const renderTasks = (todoItems) => {
+  todoItems.forEach((task) => {
+    renderTask(task)
+  });
+  handleTodListEvents();
 };
