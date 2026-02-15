@@ -48,7 +48,7 @@ export const setupGlobalListeners = (engines, settings) => {
         const btn = e.target.closest('button');
         if (btn) {
             handleEngineSelect(btn.dataset.key, engines, searchEnginesList, searchInput);
-        };
+        }
     });
 
     /*
@@ -60,24 +60,24 @@ export const setupGlobalListeners = (engines, settings) => {
             toggleClassName(searchEnginesList, 'hidden', 1);
             toggleClassName(searchContainer, focusedSearchContainerClassName, -1);
             togglesettingsPanel(settingsPanel, settingsOverlay, settingsOpenBtn, true);
-        };
+        }
 
         // Focus on the search input
         if (e.key === '/' && document.activeElement.id !== "search-input") {
             e.preventDefault();
             searchInput.focus();
-        };
+        }
 
         // perform search
         if (e.key === 'Enter' && e.target === searchInput) {
             const query = e.target.value.trim().toLowerCase();
             performSearch(query, engines);
-        };
+        }
 
         // Add new task
         if (e.key === 'Enter' && e.target === newTaskInput) {
             handleAddNewTask(newTaskInput);
-        };
+        }
     });
 
     /*
@@ -147,7 +147,7 @@ export const setupGlobalListeners = (engines, settings) => {
             }
         });
     });
-};
+}
 
 const togglesettingsPanel = (settingsPanel, settingsOverlay, settingsOpenBtn, condition) => {
     document.body.classList.toggle('overflow-hidden', condition);
@@ -163,7 +163,7 @@ const togglesettingsPanel = (settingsPanel, settingsOverlay, settingsOpenBtn, co
             btn.removeAttribute("tabindex");
         }
     });
-};
+}
 
 const handleEnginesListAppearence = (searchEnginesList, searchEnginesListTrigger) => {
 
@@ -181,7 +181,7 @@ const handleEnginesListAppearence = (searchEnginesList, searchEnginesListTrigger
         searchEnginesListTrigger.focus();
     }
 
-};
+}
 
 const handleSearchContainerFocusing = (searchContainer, focusedSearchContainerClassName, searchInput) => {
     toggleClassName(searchContainer, focusedSearchContainerClassName, 1);
@@ -193,7 +193,7 @@ const handleSearchContainerFocusing = (searchContainer, focusedSearchContainerCl
     } else {
         toggleClassName(searchContainer, 'with-suggestions', -1);
     }
-};
+}
 
 //  Update the search engines list to set the selected engine as pref erred and ensure it's active
 const handleEngineSelect = (key, engines, parent, input) => {
@@ -217,4 +217,4 @@ const handleEngineSelect = (key, engines, parent, input) => {
     // hide the list and focus again on the triger
     parent.classList.add('hidden');
     input.focus();
-};
+}

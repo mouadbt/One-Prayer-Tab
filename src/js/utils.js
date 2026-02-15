@@ -8,7 +8,7 @@ export const fetchData = async (endpoint) => {
         console.error(err);
         return null;
     }
-};
+}
 
 // Get the defaults data from the localstorage or the default
 export const loadData = (key, defaults) => {
@@ -18,12 +18,12 @@ export const loadData = (key, defaults) => {
     } catch {
         return defaults;
     }
-};
+}
 
 // Store updated data in localstorage
 export const saveData = (key, value) => {
     localStorage.setItem(key, JSON.stringify(value));
-};
+}
                                    
 // Toggle classname of the element
 export const toggleClassName = (el, className, addOrRemove) => {
@@ -38,4 +38,4 @@ export const toggleClassName = (el, className, addOrRemove) => {
             el.classList.toggle(className);
             break
     }
-};
+}

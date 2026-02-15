@@ -6,7 +6,7 @@ export const renderSettings = (settings, engines, icons) => {
 
   // render settings options
   settings.forEach(option => createOptionElement(option, icons, settingsContainer));
-};
+}
 
 // Render the search engines in the page
 export const renderEngines = (engines) => {
@@ -31,7 +31,7 @@ export const renderEngines = (engines) => {
 
     searchEnginesList.appendChild(liEL);
   });
-};
+}
 
 // Render icon of the active prefered search engine
 const renderPreferedEngineIcon = (key) => {
@@ -40,7 +40,7 @@ const renderPreferedEngineIcon = (key) => {
   icon.src = `./assets/images/searchLogos/${key}.webp`;
   iconEl.innerHTML = '';
   iconEl.appendChild(icon);
-};
+}
 
 // Embed the svg icon to the page  
 export const buildTheSvgIcon = (svgIconContent, btn, withDimensions) => {
@@ -52,7 +52,7 @@ export const buildTheSvgIcon = (svgIconContent, btn, withDimensions) => {
   }
   svg.innerHTML += svgIconContent;
   btn.appendChild(svg);
-};
+}
 
 // Render the icons in the relevant button
 export const renderIcons = (icons) => {
@@ -61,7 +61,7 @@ export const renderIcons = (icons) => {
     btn.innerHTML = '';
     buildTheSvgIcon(svgIconContent, btn);
   });
-};
+}
 
 // helper to create & append a single option
 const createOptionElement = (option, icons, container) => {
@@ -96,7 +96,7 @@ const createOptionElement = (option, icons, container) => {
   liEl.appendChild(btnEl);
 
   container.appendChild(liEl);
-};
+}
 
 // Render TodoLists in page
 export const renderTask = (task) => {
@@ -111,11 +111,11 @@ export const renderTask = (task) => {
   `;
   taskCollection.appendChild(taskDiv);
   return true;
-};
+}
 
 export const renderTasks = (todoItems) => {
   todoItems.forEach((task) => {
     renderTask(task)
   });
   handleTodListEvents();
-};
+}

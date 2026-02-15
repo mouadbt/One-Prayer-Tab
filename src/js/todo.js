@@ -6,20 +6,20 @@ import { loadData, saveData } from './utils.js';
 export const handleAddNewTask = (taskInput) => {
     addNewTask(taskInput)
     handleTodListEvents();
-};
+}
 
 // Add a new task
 export const addNewTask = (taskInput) => {
     const taskContent = taskInput.value.trim();
     if (!taskContent) return;
     const id = "taskItem" + Date.now();
-    const task = { id, text: taskContent, done: false };
+    const task = { id, text: taskContent, done: false }
     const tasks = loadData('tasks', []);
     tasks.push(task);
     saveData('tasks', tasks);
     renderTask(task);
     taskInput.value = '';
-};
+}
 
 // set a todo task as done or undo it
 export const handleTodListEvents = () => {
@@ -27,7 +27,7 @@ export const handleTodListEvents = () => {
     const removeTaskBtns = document.querySelectorAll('.task-remove-action');
     handleRemoveTasks(removeTaskBtns);
     handleUpdateTask(taskInput);
-};
+}
 
 // functions that handle removing and deleting if item
 const handleRemoveTasks = (removeTaskBtns) => {
@@ -37,7 +37,7 @@ const handleRemoveTasks = (removeTaskBtns) => {
             removeTask(id);
         })
     });
-};
+}
 
 // funcation that handles the updating of the task set it done or undo it
 const handleUpdateTask = (taskInput) => {
@@ -47,7 +47,7 @@ const handleUpdateTask = (taskInput) => {
             updateTask(id, el);
         });
     });
-};
+}
 
 // Remove a taks
 const removeTask = (id) => {
@@ -63,7 +63,7 @@ const removeTask = (id) => {
         saveData('tasks', updatedTasks);
     }, 300);
 
-};
+}
 
 // Update a task
 const updateTask = (id, el) => {
@@ -75,4 +75,4 @@ const updateTask = (id, el) => {
     }
     if (el.checked) {
     }
-};
+}

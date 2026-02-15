@@ -50,7 +50,7 @@ const init = async () => {
 
   // // Render TodoItems
   renderTasks(todoItems);
-};
+}
 
 // load and execute and start script after page fully load
 document.addEventListener("DOMContentLoaded", () => {
