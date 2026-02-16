@@ -295,7 +295,7 @@ body.dark .sunMoonThemeToggleBtn svg .sunRay {
     list-style: none;
 }
 
-#settings-panel input {
+#settings-panel #settings-options input {
     display: none;
 }
 
@@ -631,4 +631,10 @@ body.dark .sunMoonThemeToggleBtn svg .sunRay {
 
 #task-collection::-webkit-scrollbar {
     display: none;
+}
+
+
+
+.leaflet-control-layers-toggle{
+    background-size: var(--space-xs);
 }

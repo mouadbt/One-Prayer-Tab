@@ -24,14 +24,14 @@ export const loadData = (key, defaults) => {
 export const saveData = (key, value) => {
     localStorage.setItem(key, JSON.stringify(value));
 }
-                                   
+
 // Toggle classname of the element
 export const toggleClassName = (el, className, addOrRemove) => {
     switch (addOrRemove) {
-        case 1:
+        case 'add':
             el.classList.add(className);
             break
-        case -1:
+        case 'remove':
             el.classList.remove(className);
             break
         default:

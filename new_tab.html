@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./src/css/output.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
     <title>One Prayer tab</title>
   </head>
   <body class="bg-(--background100)">
@@ -15,7 +19,6 @@
         class="w-full max-w-4xl space-y-4 [&_.widget]:px-8 [&_.widget]:rounded-4xl [&_.widget]:after:rounded-4xl [&_.widget]:after:w-full [&_.widget]:after:h-full [&_.widget]:after:absolute [&_.widget]:after:inset-0 [&_.widget]:after:bg-(--background100) [&_.widget]:after:opacity-50 [&_.widget]:**:relative [&_.widget]:**:z-10 [&_.widget]:py-6 [&_.widget]:relative [&_.widget]:[&_h3]:text-xl!"
       >
         <div class="grid grid-cols-2 grid-rows-2 gap-4 items-stretch">
-          
           <!-- To do tasks -->
           <div
             id="todo"
@@ -68,7 +71,10 @@
           </div>
 
           <!-- Ayah -->
-          <div id="ayah" class="widget after:bg-blue-400/5! row-span-1 min-h-48">
+          <div
+            id="ayah"
+            class="widget after:bg-blue-400/5! row-span-1 min-h-48"
+          >
             <h3 class="">Today's ayah</h3>
           </div>
         </div>
@@ -142,6 +148,7 @@
           title="Click to open settings panel"
         ></button>
       </section>
+
       <!-- settings pnael overlay -->
       <div
         id="settings-overlay"
@@ -163,10 +170,30 @@
             x
           </button>
         </header>
-        <ul id="settings-options" class="pt-8"></ul>
+        <ul id="settings-options" class="pt-8 [&_button]:px-0!"></ul>
+
+        <!-- Map -->
+        <div
+          id="map-container"
+          class="mt-8 [&_.leaflet-control-attribution]:hidden! [&_.leaflet-touch_.leaflet-control-layers]:border-0! [&_.leaflet-touch_.leaflet-bar]:border-0! [&_.leaflet-control-layers_label_span]:text-xs!"
+        >
+          <h3>Update Your location</h3>
+          <div
+            id="map"
+            class="w-full h-72 mt-3 rounded-2xl overflow-hidden relative bg-blue-400/5 after:absolute after:w-full after:h-full after:inset-0 after:content-['If_you_are_seeing_this,_then_you_dont_have_internet_access'] after:text-(--foreground50) after:flex after:items-center after:justify-center after:text-center after:rounded-2xl after:p-4 after:z-0 [&_.leaflet-control]:bg-(--background100)! [&_.leaflet-control-zoom-in]:bg-(--background100)! [&_.leaflet-control-zoom-out]:bg-(--background100)! [&_.leaflet-control-layers-selector]:peer [&_.leaflet-control-layers-selector]:hidden 
+            [&_.leaflet-control-layers-selector+span]:w-full
+            [&_.leaflet-control-layers-selector+span]:inline-block
+            [&_.leaflet-control-layers-selector+span]:px-2 
+            [&_.leaflet-control-layers-selector+span]:border-l-2 
+            [&_.leaflet-control-layers-selector+span]:border-(--background100) 
+            [&_.leaflet-control-layers-selector:checked+span]:border-(--background200) 
+            [&_.leaflet-control-layers-selector+span]:transition-colors
+            [&_.leaflet-control-layers-toggle]:w-[30px]! [&_.leaflet-control-layers-toggle]:h-[30px]!"
+          ></div>
+        </div>
       </section>
     </main>
-
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script type="module" src="./src/js/main.js"></script>
   </body>
 </html>

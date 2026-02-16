@@ -161,9 +161,9 @@ const clearSuggestions = (suggestionsList) => {
 
 const handleSearchContainerRadius = (suggestions, searchContainer) => {
     if (suggestions.length === 0) {
-        toggleClassName(searchContainer, 'with-suggestions', -1);
+        toggleClassName(searchContainer, 'with-suggestions', 'remove');
     } else {
-        toggleClassName(searchContainer, 'with-suggestions', 1);
+        toggleClassName(searchContainer, 'with-suggestions', 'add');
     }
 }
 

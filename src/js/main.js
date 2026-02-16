@@ -1,11 +1,10 @@
-// import { initLogic } from "./suggestions.js";
 import { fetchData, loadData } from "./utils.js";
 import { renderEngines, renderIcons } from "./ui.js ";
 import { applyAllSettings } from "./settings.js";
 import { setupGlobalListeners } from "./events.js";
 import { initSuggestionsLogic } from "./suggestions.js";
 import { renderSettings, renderTasks } from "./ui.js";
-// import { renderTasks } from './ui.js';               
+import { handleUserLocation } from './location.js';
 
 const init = async () => {
   // get the default data
@@ -13,6 +12,8 @@ const init = async () => {
 
   // Load icons from json file
   const icons = await fetchData("./assets/data/icons.json");
+
+  // const res = await fetchData('105.154.253.15');
 
   // Get the search engines from localstorage or default const
   const engines = loadData("searchEngines", DEFAULTS.searchEngines);
@@ -39,7 +40,7 @@ const init = async () => {
   // Initialize suggestions logic
   initSuggestionsLogic();
 
-  // // get the Todo Items
+  // get the Todo Items
   const todoItems = loadData('tasks', [
     {
       "id": "taskItem1",
@@ -48,8 +49,11 @@ const init = async () => {
     }
   ]);
 
-  // // Render TodoItems
+  // Render TodoItems
   renderTasks(todoItems);
+
+  // load map and handle updating location from map
+  handleUserLocation();
 }
 
 // load and execute and start script after page fully load

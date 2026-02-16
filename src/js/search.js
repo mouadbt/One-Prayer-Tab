@@ -1,10 +1,12 @@
+import { loadData } from "./utils.js";
+
 export function performSearch(query) {
 
     if (!query) {
         return;
     }
 
-    const engines = JSON.parse(localStorage.getItem('searchEngines'));
+    const engines = loadData('searchEngines', false);
     const { isItUrl, queryFromFunction } = isValidUrl(query);
     if (isItUrl) {
         window.location.href = queryFromFunction;

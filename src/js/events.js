@@ -57,8 +57,8 @@ export const setupGlobalListeners = (engines, settings) => {
     document.addEventListener('keydown', (e) => {
         // Close settings panel
         if (e.key === 'Escape') {
-            toggleClassName(searchEnginesList, 'hidden', 1);
-            toggleClassName(searchContainer, focusedSearchContainerClassName, -1);
+            toggleClassName(searchEnginesList, 'hidden', 'add');
+            toggleClassName(searchContainer, focusedSearchContainerClassName, 'remove');
             togglesettingsPanel(settingsPanel, settingsOverlay, settingsOpenBtn, true);
         }
 
@@ -93,11 +93,11 @@ export const setupGlobalListeners = (engines, settings) => {
     document.addEventListener('click', (e) => {
         // Close Search Engine list
         if (!searchEnginesList.contains(e.target) && !searchEnginesListTrigger.contains(e.target) && !searchEnginesList.classList.contains("hidden")) {
-            toggleClassName(searchEnginesList, 'hidden', 1);
+            toggleClassName(searchEnginesList, 'hidden', 'add');
         }
         // unset focusing of search container 
         if (!searchContainer.contains(e.target) && !searchEnginesList.classList.contains(focusedSearchContainerClassName)) {
-            toggleClassName(searchContainer, focusedSearchContainerClassName, -1);
+            toggleClassName(searchContainer, focusedSearchContainerClassName, 'remove');
         }
     });
 
@@ -168,7 +168,7 @@ const togglesettingsPanel = (settingsPanel, settingsOverlay, settingsOpenBtn, co
 const handleEnginesListAppearence = (searchEnginesList, searchEnginesListTrigger) => {
 
     // show or hide the search engines lists
-    toggleClassName(searchEnginesList, 'hidden', 0);
+    toggleClassName(searchEnginesList, 'hidden', 'toggle');
 
     // focus on the first searach engine element when list is displayed or on the trigger if it hidden 
     if (!searchEnginesList.classList.contains('hidden')) {
@@ -184,14 +184,14 @@ const handleEnginesListAppearence = (searchEnginesList, searchEnginesListTrigger
 }
 
 const handleSearchContainerFocusing = (searchContainer, focusedSearchContainerClassName, searchInput) => {
-    toggleClassName(searchContainer, focusedSearchContainerClassName, 1);
+    toggleClassName(searchContainer, focusedSearchContainerClassName, 'add');
 
     // set a border radius to the container when there is no value in the input and with no value there is no suggestions there for there is no need to remove border radius
     const value = searchInput.value.trim();
     if (value) {
-        toggleClassName(searchContainer, 'with-suggestions', 1);
+        toggleClassName(searchContainer, 'with-suggestions', 'add');
     } else {
-        toggleClassName(searchContainer, 'with-suggestions', -1);
+        toggleClassName(searchContainer, 'with-suggestions', 'remove');
     }
 }
 
