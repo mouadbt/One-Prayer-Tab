@@ -359,7 +359,6 @@ body.dark .sunMoonThemeToggleBtn svg .sunRay {
 }
 
 #weather {
-    background: url('../../assets/images/weather/Afternoon + Storm.jpeg');
     background-size: cover;
     background-position: center;
 }

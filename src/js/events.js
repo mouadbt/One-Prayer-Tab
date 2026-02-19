@@ -111,7 +111,7 @@ export const setupGlobalListeners = (engines, settings) => {
     suggestionsList.addEventListener("click", (e) => {
         const link = e.target.closest(".suggestion-link");
         if (!link) return;
-        link.classList.add("loading"); // show loading icon
+        toggleClassName(link,'loading','add');
     });
 
     // Handle setttings panel appearing
@@ -215,6 +215,6 @@ const handleEngineSelect = (key, engines, parent, input) => {
     renderEngines(updated);
 
     // hide the list and focus again on the triger
-    parent.classList.add('hidden');
+    toggleClassName(parent,'hidden','add');
     input.focus();
 }

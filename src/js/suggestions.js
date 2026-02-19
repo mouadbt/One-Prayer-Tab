@@ -128,7 +128,7 @@ const buildSuggestionItem = (item, loadingSvgContent) => {
     suggestionItem.className = 'search-result-item';
 
     const link = document.createElement('a');
-    link.classList.add("suggestion-link")
+    toggleClassName(link,"suggestion-link",'add');
     link.href = item.url;
 
     const favicon = document.createElement('img');

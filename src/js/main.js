@@ -3,9 +3,11 @@ import { renderEngines, renderIcons } from "./ui.js ";
 import { applyAllSettings } from "./settings.js";
 import { setupGlobalListeners } from "./events.js";
 import { initSuggestionsLogic } from "./suggestions.js";
-import { renderSettings, renderTasks } from "./ui.js";
+import { renderSettings } from "./ui.js";
 import { handleUserLocation } from './location.js';
-
+import { initTaskEvents, initTasks } from "./todo.js";
+import { initClock } from "./time.js";
+import { initWeather } from './weather.js';
 const init = async () => {
   // get the default data
   const DEFAULTS = await fetchData("./assets/data/defaults.json");
@@ -40,20 +42,14 @@ const init = async () => {
   // Initialize suggestions logic
   initSuggestionsLogic();
 
-  // get the Todo Items
-  const todoItems = loadData('tasks', [
-    {
-      "id": "taskItem1",
-      "text": "Your first task",
-      "done": false
-    }
-  ]);
-
-  // Render TodoItems
-  renderTasks(todoItems);
+  // Initialize tasks logic
+  initTasks();
 
   // load map and handle updating location from map
   handleUserLocation();
+
+  // Initialize clock logic
+  initClock();
 }
 
 // load and execute and start script after page fully load

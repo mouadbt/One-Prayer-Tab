@@ -1,4 +1,5 @@
 import { saveData, fetchData, loadData } from './utils.js';
+import { initWeather } from './weather.js';
 
 // Load the map and show the user's location on the map and let the user update it
 // Load the map and show the user's location on the map and let the user update it
@@ -70,6 +71,11 @@ const getUserCoordinatesFromIp = async (ip) => {
     return coordsData;
 };
 
+const getCoords = async () => {
+    const coordsData = await fetchData(`https://ipwho.is/?format=json`);
+    return coordsData;
+}
+
 export const handleUserLocation = async () => {
 
     // Get the coords from localStorage
@@ -91,6 +97,16 @@ export const handleUserLocation = async () => {
             }
         }
 
+        // First attempt faild using first api try the other api
+        if (!coords) {
+
+            // get the coords from api
+            const lat_Lon_Obj = await getCoords();
+            if (lat_Lon_Obj && lat_Lon_Obj.latitude && lat_Lon_Obj.longitude) {
+                coords = [lat_Lon_Obj.latitude, lat_Lon_Obj.longitude];
+            }
+        }
+
         // If coords are still not defined, fallback to Cairo coords
         if (!coords) {
             coords = [30.0444, 31.2357];
@@ -102,4 +118,7 @@ export const handleUserLocation = async () => {
 
     // Call the map handling function
     handleMap(coords);
+
+    // Initialize weather logic
+    initWeather(coords);
 };

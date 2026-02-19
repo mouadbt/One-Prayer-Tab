@@ -1,4 +1,4 @@
-import { handleTodListEvents } from './todo.js';
+import { toggleClassName } from "./utils.js";
 
 // render the settings options & search engines in the settings panel
 export const renderSettings = (settings, engines, icons) => {
@@ -18,13 +18,13 @@ export const renderEngines = (engines) => {
 
     const liEL = document.createElement("li");
     const liButtonEl = document.createElement("button");
-    liButtonEl.classList.add("search-engine");
+    toggleClassName(liButtonEl, "search-engine", 'add');
     liButtonEl.textContent = el.label;
     liButtonEl.dataset.key = el.key;
     liEL.appendChild(liButtonEl);
 
     if (el.preferred) {
-      liButtonEl.classList.add("active");
+      toggleClassName(liButtonEl, 'active', 'add');
       renderPreferedEngineIcon(el.key);
       preferedEngineLabel.textContent = el.label;
     }
@@ -78,7 +78,7 @@ const createOptionElement = (option, icons, container) => {
   labelEl.setAttribute("for", option.key);
 
   const checkDiv = document.createElement("div");
-  checkDiv.classList.add("check");
+  toggleClassName(checkDiv, 'check', 'add');
 
   const iconData = icons["check"];
   if (iconData && iconData.content) {
@@ -102,7 +102,7 @@ const createOptionElement = (option, icons, container) => {
 export const renderTask = (task) => {
   const taskCollection = document.querySelector("#task-collection");
   const taskDiv = document.createElement('div');
-  taskDiv.classList.add("task-entry");
+  toggleClassName(taskDiv, 'task-entry', 'add');
   taskDiv.dataset.id = task.id;
   taskDiv.innerHTML = `
     <input type="checkbox" class="task-toggle-box" id="${task.id}" ${task.done ? "checked" : ""}>
@@ -117,5 +117,4 @@ export const renderTasks = (todoItems) => {
   todoItems.forEach((task) => {
     renderTask(task)
   });
-  handleTodListEvents();
 }
