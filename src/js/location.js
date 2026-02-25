@@ -1,3 +1,4 @@
+import { initPrayers } from './prayers.js';
 import { saveData, fetchData, loadData } from './utils.js';
 import { initWeather } from './weather.js';
 
@@ -121,4 +122,7 @@ export const handleUserLocation = async () => {
 
     // Initialize weather logic
     initWeather(coords);
+
+    // Initialize weather logic
+    initPrayers();
 };

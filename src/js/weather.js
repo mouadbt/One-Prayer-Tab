@@ -63,7 +63,7 @@ const shouldFetchNewData = () => {
     const stored = loadData(WEATHER_STORAGE_KEY, null);
     if (!stored) return true; // No data, need to fetch
 
-    return Date.now() - stored.lastFetched > SIX_HOURS_MS;
+    return Date.now() - stored.lastFetched > SIX_HOURS_MS;  
 };
 
 // Update temperature element
@@ -106,7 +106,7 @@ const updateWeatherBackground = (condition) => {
 };
 
 // Get current weather from forecast (first entry or current time)
-const getCurrentWeather = (forecast) => {
+export const getCurrentWeather = (forecast) => {
     if (!forecast) return null;
 
     const now = new Date();
@@ -129,7 +129,7 @@ const getCurrentWeather = (forecast) => {
 };
 
 // Display weather data on UI
-const displayWeather = (weather) => {
+export const displayWeather = (weather) => {
     if (!weather) return;
 
     const weatherInfo = getWeatherSummary(weather.code);
@@ -163,7 +163,7 @@ const fetchWeather = async (lat, lon) => {
 };
 
 // Load backup weather if API fails
-const loadBackupWeather = () => {
+export const loadBackupWeather = () => {
     const stored = getStoredWeatherData();
     if (!stored) return;
     displayWeather(getCurrentWeather(stored));
