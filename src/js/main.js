@@ -46,7 +46,7 @@ const init = async () => {
   initTasks(icons);
 
   // load map and handle updating location from map
-  handleUserLocation();
+  handleUserLocation(DEFAULTS.methods);
 
   // Initialize clock logic
   initClock();

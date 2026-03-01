@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@masaajid/prayer-times": "^1.0.1",
     "@tailwindcss/cli": "^4.1.18",
     "adhan": "^4.4.3",
     "tailwindcss": "^4.1.18",
@@ -14,7 +15,6 @@
   "version": "1.0.0",
   "description": "A minimalist browser extension (Chrome + Firefox) that replaces your new tab page with a clean interface with search functionality, prayer times, weather and more...",
   "main": "index.js",
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mouadbt/One-Newtab-Prayer.git"

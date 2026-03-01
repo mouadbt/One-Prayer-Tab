@@ -57,7 +57,6 @@ export const buildTheSvgIcon = (svgIconContent, btn, withDimensions) => {
 // Render the icons in the relevant button
 export const renderIcons = (icons) => {
   document.querySelectorAll('.icon-btn').forEach((btn) => {
-    console.log(btn)
     const svgIconContent = icons[btn.dataset.icon]?.content;
     btn.innerHTML = '';
     buildTheSvgIcon(svgIconContent, btn);
@@ -124,7 +123,6 @@ export const renderTask = (task, svgIconContent) => {
   removeBtn.dataset.remove = task.id;
   removeBtn.title = 'Click to remove task';
   removeBtn.tabIndex = -1;
-  console.log(svgIconContent)
   if (svgIconContent) {
     buildTheSvgIcon(svgIconContent, removeBtn);
   } else {
@@ -137,4 +135,59 @@ export const renderTask = (task, svgIconContent) => {
 
   taskCollection.appendChild(taskDiv);
   return true;
+}
+
+// Renders the next prayer in #next-prayer: name, hours left, and minutes left
+export const renderNextPrayer = (categorizedPrayers) => {
+  const nextPrayer = categorizedPrayers.find((p) => p.type === "next");
+  const nameEl = document.querySelector("#next-prayer-name");
+  const hoursEl = document.querySelector("#next-prayer-hours");
+  const minsEl = document.querySelector("#next-prayer-mins");
+
+  if (!nextPrayer) {
+    nameEl.textContent = "---";
+    hoursEl.textContent = "--";
+    minsEl.textContent = "--";
+    return;
+  }
+
+  const now = Date.now();
+  const diff = nextPrayer.timestamp - now;
+
+  if (diff <= 0) {
+    nameEl.textContent = "---";
+    hoursEl.textContent = "--";
+    minsEl.textContent = "--";
+    return;
+  }
+
+  const hoursLeft = Math.floor(diff / (1000 * 60 * 60));
+  const minsLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+  nameEl.textContent = nextPrayer.name;
+  hoursEl.textContent = String(hoursLeft);
+  minsEl.textContent = String(minsLeft);
+}
+
+
+// Renders all prayers
+export const renderAllPrayers = (categorizedPrayers) => {
+  const listEl = document.getElementById("prayers-list");
+  listEl.innerHTML = "";
+
+  categorizedPrayers.forEach((prayer) => {
+    const li = document.createElement("li");
+    li.className = prayer.type;
+
+    const nameSpan = document.createElement("span");
+    nameSpan.textContent = prayer.name;
+
+    const timeSpan = document.createElement("span");
+    timeSpan.textContent = prayer.time;
+    timeSpan.classList.add("low-opacity");
+
+    li.appendChild(nameSpan);
+    li.appendChild(timeSpan);
+    listEl.appendChild(li);
+  });
 }

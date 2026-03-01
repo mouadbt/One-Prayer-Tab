@@ -57,6 +57,7 @@ export const handleMap = (coords) => {
 
         marker.setLatLng([lat, lng]);
         saveData("location", [lat, lng]);
+        initPrayers();
     });
 }
 
@@ -77,7 +78,7 @@ const getCoords = async () => {
     return coordsData;
 }
 
-export const handleUserLocation = async () => {
+export const handleUserLocation = async (prayerTimesMethods) => {
 
     // Get the coords from localStorage
     let coords = loadData('location', null);
@@ -124,5 +125,5 @@ export const handleUserLocation = async () => {
     initWeather(coords);
 
     // Initialize weather logic
-    initPrayers();
+    initPrayers(prayerTimesMethods);
 }
