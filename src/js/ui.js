@@ -139,7 +139,6 @@ export const renderTask = (task, svgIconContent) => {
 
 // Renders the next prayer in #next-prayer: name, hours left, and minutes left
 export const renderNextPrayer = (name, hours, mins) => {
-  console.log(name, hours, mins);
   const nameEl = document.querySelector("#next-prayer-name");
   const hoursEl = document.querySelector("#next-prayer-hours");
   const minsEl = document.querySelector("#next-prayer-mins");
@@ -150,7 +149,6 @@ export const renderNextPrayer = (name, hours, mins) => {
 
 // Renders all prayers
 export const renderAllPrayers = (categorizedPrayers) => {
-  console.log(categorizedPrayers);
   const listEl = document.getElementById("prayers-list");
   listEl.innerHTML = "";
 

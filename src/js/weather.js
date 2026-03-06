@@ -1,7 +1,7 @@
 import { fetchData, loadData, saveData, toggleClassName } from './utils.js';
 
 const WEATHER_STORAGE_KEY = 'weatherForecast';
-const SIX_HOURS_MS = 6 * 60 * 60 * 1000;
+const ONE_HOUR_MS = 60 * 60 * 1000;
 
 // Weather codes map
 const WEATHER_CODES = {
@@ -43,11 +43,12 @@ const getWeatherSummary = (code) => {
     return WEATHER_CODES[Number(code)] || { desc: "Unknown", condition: "clear" }
 }
 
-// Save forecast data with timestamp
-const saveWeatherData = (forecast) => {
+// Save forecast data with timestamp and coordinates
+const saveWeatherData = (forecast, lat, lon) => {
     saveData(WEATHER_STORAGE_KEY, {
         forecast,
-        lastFetched: Date.now()
+        lastFetched: Date.now(),
+        lastCoords: { lat, lon }
     });
 }
 
@@ -58,12 +59,17 @@ const getStoredWeatherData = () => {
     return stored.forecast;
 }
 
-// Check if we should fetch new data (6+ hours since last fetch)
-const shouldFetchNewData = () => {
+// Check if we should fetch new data (1+ hours since last fetch or coords changed)
+const shouldFetchNewData = (lat, lon) => {
     const stored = loadData(WEATHER_STORAGE_KEY, null);
     if (!stored) return true; // No data, need to fetch
 
-    return Date.now() - stored.lastFetched > SIX_HOURS_MS;  
+    // Check if coordinates have changed
+    if (stored.lastCoords && (stored.lastCoords.lat !== lat || stored.lastCoords.lon !== lon)) {
+        return true;
+    }
+
+    return Date.now() - stored.lastFetched > ONE_HOUR_MS;
 }
 
 // Update temperature element
@@ -158,7 +164,7 @@ const fetchWeather = async (lat, lon) => {
         return;
     }
 
-    saveWeatherData(data.hourly);
+    saveWeatherData(data.hourly, lat, lon);
     displayWeather(getCurrentWeather(data.hourly));
 }
 
@@ -177,7 +183,7 @@ export const initWeather = () => {
     const [lat, lon] = coords;
 
     // Check if we need to fetch new data
-    if (shouldFetchNewData()) {
+    if (shouldFetchNewData(lat, lon)) {
         fetchWeather(lat, lon);
     } else {
         // Use cached data

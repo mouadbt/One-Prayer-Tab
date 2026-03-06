@@ -63,6 +63,7 @@ const handleMap = (coords) => {
         marker.setLatLng([lat, lng]);
         saveData("location", [lat, lng]);
         initPrayers();
+        initWeather();
     });
 };
 
@@ -127,7 +128,7 @@ export const handleUserLocation = async (prayerTimesMethods) => {
     handleMap(coords);
 
     // Initialize weather logic
-    initWeather(coords);
+    initWeather();
 
     // Initialize prayers logic
     initPrayers(prayerTimesMethods);

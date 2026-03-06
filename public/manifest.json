@@ -1,13 +1,20 @@
 {
-  "name": "Min Tab",
+  "name": "One Prayer Tab",
   "version": "2.3",
   "manifest_version": 3,
-  "description": "A custom new tab page with a minimalist black design.",
+  "description": "A custom new tab page with prayer times, weather and more...",
   "browser_specific_settings": {
     "gecko": {
-      "id": "min-tab@extension.local",
+      "id": "one-prayer-tab@extension.local",
       "strict_min_version": "109.0"
     }
+  },
+  "background": {
+    "service_worker": "/background.js",
+    "scripts": [
+      "background.js"
+    ],
+    "type": "module"
   },
   "chrome_url_overrides": {
     "newtab": "/index.html"

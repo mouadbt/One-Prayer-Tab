@@ -1,9 +1,5 @@
 import { renderAllPrayers, renderNextPrayer } from "./ui.js";
 import { fetchData, loadData, saveData } from "./utils.js";
-import {
-  showNextPrayerNotification,
-  showCurrentPrayerNotification,
-} from "./notifications.js";
 
 const PRAYERS_STORAGE_KEY = "prayers";
 const ALLOWED_PRAYERS = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
@@ -105,9 +101,30 @@ export const getTimeLeft = (timestamp) => {
   return { hours, mins };
 };
 
+// Function to bridge the UI and the background Service Worker/Script
+const scheduleNextPrayerBackgroundNotification = (timestamp, name) => {
+
+  // Determine the API namespace Chrome uses 'chrome' while Firefox uses 'browser'
+  const browserApi = typeof chrome !== "undefined" ? chrome : browser;
+
+  // Verify that the communication channel (runtime.sendMessage) is available if it not available then we just stop
+  if (!browserApi.runtime?.sendMessage) return;
+
+  console.log(`[UI] Sending message to background for: ${name} at ${timestamp}`);
+
+  // Send a message object to the Background Script/Service Worker
+  browserApi.runtime.sendMessage({
+    type: "SCHEDULE_NEXT_PRAYER",
+    payload: { timestamp, name },
+  });
+};
+
 // display current prayers in ui
 const displayPrayers = () => {
   const prayers = getPrayersFromStorage();
+  
+  scheduleNextPrayerBackgroundNotification(Date.now() + 10000, "DEBUG_TEST");
+  
   if (!prayers) return;
 
   const nowInSeconds = getNowInSeconds();
@@ -126,23 +143,13 @@ const displayPrayers = () => {
   const categorizedPrayers = groupPrayers(allPrayers);
 
   const nextPrayer = categorizedPrayers.find((p) => p.type === "next");
-  renderAllPrayers(categorizedPrayers);
-  
   if (!nextPrayer) return;
 
   const { hours, mins } = getTimeLeft(nextPrayer.timestamp);
 
+  renderAllPrayers(categorizedPrayers);
   renderNextPrayer(nextPrayer.name, hours, mins);
-
-  // show notification if next prayer is in less than 5 minutes
-  if (hours === 0 && mins < 5) {
-    showNextPrayerNotification(mins, nextPrayer.name);
-  }
-
-  // show notification if next prayer time is here
-  if (hours === 0 && mins === 0) {
-    showCurrentPrayerNotification(nextPrayer.name);
-  }
+  // scheduleNextPrayerBackgroundNotification(nextPrayer.timestamp, nextPrayer.name);
 };
 
 // split time string to hour and min
@@ -226,13 +233,6 @@ const groupPrayers = (todayPrayers) => {
   return prayersTimes;
 };
 
-// load stored prayers and render them
-const loadStoredPrayers = () => {
-  // Render the data in the page
-  displayPrayers();
-};
-
-// helpers for fetching prayers
 // build api url for calendar endpoint
 const buildCalendarUrl = (year, month, lat, lon) => {
   return `https://api.aladhan.com/v1/calendar/${year}/${month}?latitude=${lat}&longitude=${lon}`;
@@ -291,8 +291,7 @@ export const fetchPrayers = async (lat, lon) => {
   displayPrayers();
 };
 
-// helpers for checking if we should fetch new data
-// check if stored prayers are from different month or year
+// Check if stored prayers are from different month or year
 const isDifferentYearOrMonth = (stored) => {
   const now = new Date();
   return (
@@ -326,8 +325,6 @@ export const initPrayers = () => {
   const [lat, lon] = coords;
   if (shouldFetchNewData(coords)) {
     fetchPrayers(lat, lon);
-  } else {
-    loadStoredPrayers();
   }
 };
 
