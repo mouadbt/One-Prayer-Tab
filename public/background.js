@@ -1,10 +1,8 @@
-// Determine the browserApi namespace Chrome uses 'chrome' while Firefox uses 'browser'
 const browserApi = typeof chrome !== "undefined" ? chrome : browser;
+const isFirefox = typeof browser !== "undefined";
 
-// Show a notification when prayer time comes
-const showPrayerNotification = (prayerName) => {
-  if (!prayerName) return;
-
+// Show notification
+const showNotification = (prayerName) => {
   browserApi.notifications.create({
     type: "basic",
     title: prayerName,
@@ -13,43 +11,50 @@ const showPrayerNotification = (prayerName) => {
   });
 };
 
-// Play Athan when prayer time is came
-const playSound = () => {
-  const athan = new Audio('/assets/audio/اسلام-صبحي.m4a');
-  console.log('now playing athan sound')
-  athan.play();
+// Play athan sound - Firefox plays directly, Chrome uses offscreen
+async function playAthan() {
+  if (isFirefox) {
+    // Firefox: play audio directly in background script
+    const audio = new Audio(browserApi.runtime.getURL("assets/audio/islam-subhi.m4a"));
+    audio.play().catch(err => console.error('Audio play error:', err));
+    // Auto-stop after 3 minutes
+    setTimeout(() => { audio.pause(); }, 180000);
+  } else {
+    // Chrome: use offscreen document
+    if (!(await browserApi.offscreen.hasDocument?.())) {
+      await browserApi.offscreen.createDocument({
+        url: 'offscreen.html',
+        reasons: ['AUDIO_PLAYBACK'],
+        justification: 'Play athan sound'
+      });
+      await new Promise(r => setTimeout(r, 300));
+    }
+    browserApi.runtime.sendMessage({ type: 'PLAY_ATHAN' });
+  }
 }
 
-// Tells the browser's hardware clock to set an alarm
-const createAlarm = (timestamp, name) => {
-
-  const alarmName = `prayer:${name}`;
-
-  // After clearing it if it's already exist the alaram that will excute and run in the prayer timestamp is created
-  browserApi.alarms.clear(alarmName, () => {
-
-    // Create the alaram 
-    browserApi.alarms.create(alarmName, { when: timestamp });
-
-    console.log('now playing athan sound')
-
-    // Show the notification
-    showPrayerNotification(name);
-    playSound();
-  });
-}
-
-// 1. Listen for messages from the UI
+// Handle scheduled prayer alarms
 browserApi.runtime.onMessage.addListener((message, sender, sendResponse) => {
-
   if (message.type === "SCHEDULE_NEXT_PRAYER") {
     const { timestamp, name } = message.payload;
-
-    // Trigger the alarm creation
-    createAlarm(timestamp, name);
-
-    // Tell the UI we got the message (important for Firefox stability)
+    browserApi.alarms.create(`prayer:${name}`, { when: timestamp });
     sendResponse({ status: "success" });
   }
   return true;
 });
+
+// When alarm fires, play athan and show notification
+browserApi.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name.startsWith('prayer:')) {
+    const prayerName = alarm.name.split(':')[1];
+    showNotification(prayerName);
+    playAthan();
+  }
+});
+
+// Stop athan when notification is closed (Chrome only)
+if (!isFirefox) {
+  browserApi.notifications.onClosed.addListener(() => {
+    browserApi.runtime.sendMessage({ type: 'STOP_ATHAN' });
+  });
+}

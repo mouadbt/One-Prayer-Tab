@@ -10,22 +10,33 @@
     }
   },
   "background": {
-    "service_worker": "/background.js",
+    "service_worker": "background.js",
     "scripts": [
       "background.js"
     ],
     "type": "module"
   },
   "chrome_url_overrides": {
-    "newtab": "/index.html"
+    "newtab": "index.html"
   },
   "permissions": [
     "history",
     "topSites",
     "alarms",
-    "notifications"
+    "notifications",
+    "offscreen"
   ],
   "icons": {
-    "128": "/assets/images/icon128.png"
-  }
+    "128": "assets/images/icon128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "assets/audio/*.m4a"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
 }
