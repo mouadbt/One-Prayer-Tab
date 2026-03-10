@@ -8,6 +8,7 @@ import { handleUserLocation } from "./location.js";
 import { initTasks } from "./todo.js";
 import { initClock } from "./time.js";
 import "../css/style.css";
+import { initAyah } from "./ayah.js";
 const init = async () => {
   // get the default data
   const DEFAULTS = await fetchData("./assets/data/defaults.json");
@@ -55,7 +56,10 @@ const init = async () => {
   setTimeout(() => {
     document.querySelector("#settings-panel").classList.remove("hidden");
   }, 500);
-  
+
+  // Initialize ayah logic
+  initAyah();
+
 };
 
 // load and execute and start script after page fully load

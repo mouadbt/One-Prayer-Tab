@@ -103,12 +103,24 @@ const updateWind = (value) => {
 // Update background image
 const updateWeatherBackground = (condition) => {
     const weatherEl = document.querySelector("#weather");
+    const ayahImgEl = document.querySelector("#ayah-img");
+    const ayahEl = document.querySelector("#ayah");
+    const ayahCoverEl = document.querySelector("#ayah-cover");
+    const bgElements = [weatherEl, ayahEl, ayahCoverEl];
     if (!weatherEl) return;
 
     const imagePath = `./assets/images/weather/${getTimeOfDay()}_${condition}.jpeg`;
+    if (ayahImgEl) ayahImgEl.src = imagePath;
     weatherEl.style.backgroundImage = `url('${imagePath}')`;
-
+    ayahCoverEl.style.backgroundImage = `url('${imagePath}')`;
     toggleClassName(weatherEl, 'after:bg-black!', 'add');
+    // bgElements.forEach((el) => {
+    //     if (el) {
+    //         el.style.backgroundImage = `url('${imagePath}')`
+    //         toggleClassName(el, 'after:bg-black!', 'add');
+    //     }
+    // });
+
 }
 
 // Get current weather from forecast (first entry or current time)

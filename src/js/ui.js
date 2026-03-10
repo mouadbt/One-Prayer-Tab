@@ -168,3 +168,60 @@ export const renderAllPrayers = (categorizedPrayers) => {
     listEl.appendChild(li);
   });
 }
+
+// Render Ayah Skeleton widget 
+export const renderSkeleton = () => {
+  const ayahContent = document.querySelector("#ayah-content");
+  ayahContent.innerHTML = `
+    <h3>Today's Ayah</h3>
+    <div class="ayah-skeleton ayah-arabic-sk"></div>
+    <div class="ayah-skeleton ayah-tafsir-sk"></div>
+  `;
+}
+
+
+export const renderAyah = (ayah) => {
+  const ayahInfo = document.querySelector("#ayah-info");
+  const ayahEL = document.querySelector("#ayah-value");
+  const ayahTafsir = document.querySelector("#ayah-tafsir");
+
+  ayahInfo.textContent = `${ayah.surah} · الآية ${ayah.number}`;
+  ayahEL.textContent = `﴿${ayah.arabic}﴾`;
+  ayahTafsir.textContent = `${ayah.tafsir}`;
+  // el.innerHTML = `
+  //   <div class="ayah-header">
+  //     <h3>Today's Ayah</h3>
+  //   </div>
+
+  //   <div class="ayah-meta" dir="rtl" lang="ar">${ayah.surah} · الآية ${ayah.number}</div>
+
+  //   <p class="ayah-arabic" dir="rtl" lang="ar">${ayah.arabic}</p>
+
+  //   <div class="ayah-tafsir-wrap">
+  //     <p class="ayah-tafsir">${ayah.tafsir}</p>
+  //   </div>
+
+  //   <div class="ayah-controls">
+  //     <button class="ayah-btn" id="ayah-prev" title="Previous Ayah">
+  //       ${svgPrev()}
+  //     </button>
+
+  //     <button class="ayah-btn ayah-play-btn" id="ayah-play" title="Play Recitation">
+  //       ${svgPlay()}
+  //     </button>
+
+  //     <button class="ayah-btn" id="ayah-next" title="Next Ayah">
+  //       ${svgNext()}
+  //     </button>
+
+  //     <button class="ayah-btn" id="ayah-copy" title="Copy Ayah">
+  //       ${svgCopy()}
+  //     </button>
+  //   </div>
+
+  //   <div class="ayah-copy-toast" id="ayah-copy-toast">Copied!</div>
+  // `;
+
+  // bindControls();
+  // preloadAudio(currentIndex);
+}

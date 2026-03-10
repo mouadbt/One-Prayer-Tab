@@ -14,8 +14,7 @@
         class="w-full max-w-4xl space-y-4 [&_.widget]:px-8 [&_.widget]:rounded-4xl [&_.widget]:after:rounded-4xl [&_.widget]:after:w-full [&_.widget]:after:h-full [&_.widget]:after:absolute [&_.widget]:after:inset-0 [&_.widget]:after:opacity-50 [&_.widget]:**:relative [&_.widget]:**:z-10 [&_.widget]:py-6 [&_.widget]:relative [&_.widget]:[&_h3]:text-xl! [&_.widget]:after:bg-blue-400/5"
       >
         <!-- Prayers -->
-        <div class="grid grid-cols-12 items-stretch w-full gap-4 max-w-4xl">
-          <!-- Timer for the next upcoming prayer -->
+        <div class="grid grid-cols-12 items-stretch w-full gap-4">
           <div
             id="next-prayer"
             class="col-span-4 widget flex flex-col justify-between [&_.low-opacity]:opacity-75"
@@ -84,8 +83,28 @@
           </div>
 
           <!-- Ayah -->
-          <div id="ayah" class="widget row-span-3">
-            <h3 class="">Today's ayah</h3>
+          <div id="ayah" class="group widget row-span-3 relative p-0! overflow-hidden [&_.low-opacity]:opacity-75">
+            <img
+              id="ayah-img"
+              class="absolute! w-full h-full inset-0 blur-lg z-0! brightness-30 "
+            />
+            <div id="ayah-content-container" class="px-8 py-6">
+              <div class="flex items-center justify-between gap-4">
+                <h3 class="">Today's ayah</h3>
+                <span id="ayah-info" class="translate-y-0.5 low-opacity"></span>
+              </div>
+              <div id="cover-container" class=" items-center justify-center scale-40 -translate-y-8 -mb-22 hidden!">
+                <div
+                  class="group-hover:scale-110 transition-transform duration-150 widget w-48 h-48"
+                  id="ayah-cover"
+                  title="Click to play resitation"
+                ></div>
+              </div>
+            </div>
+            <div id="ayah-content" class="w-full max-h-50 overflow-y-auto px-8 pb-6">
+              <h4 id="ayah-value" class="text-center text-base! z-20! relative select-text!" dir="rtl"></h4>
+              <h5 id="ayah-tafsir" class="text-sm! text-center mt-2 low-opacity z-20! relative select-text!"></h5>
+            </div>
           </div>
 
           <!-- To do tasks -->

@@ -409,7 +409,8 @@ body.dark .sunMoonThemeToggleBtn svg .sunRay {
     clip-path: var(--clip-path-squircle);
 }
 
-#weather {
+#weather,
+#ayah-cover {
     background-size: cover;
     background-position: center;
 }

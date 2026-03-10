@@ -1,332 +1,246 @@
 import { renderAllPrayers, renderNextPrayer } from "./ui.js";
 import { fetchData, loadData, saveData } from "./utils.js";
 
-const PRAYERS_STORAGE_KEY = "prayers";
+const STORAGE_KEY = "prayers";
 const ALLOWED_PRAYERS = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
 
-// Save forecast data with timestamp
-const savePrayersData = (prayersData) => {
-  saveData(PRAYERS_STORAGE_KEY, prayersData);
+let todayPrayers = null;
+
+let midnightTimer = null;
+
+// Save prayers to storage
+const savePrayers = (data) => saveData(STORAGE_KEY, data);
+
+// Load prayers from storage
+const loadPrayers = () => loadData(STORAGE_KEY, null);
+
+// Format hijri date string from api object
+const formatHijri = (date) => {
+  return `${date.hijri.day} - ${date.hijri.month.ar} / ${date.hijri.month.en} - ${date.hijri.year}`
 };
 
-// helpers for formatting stored prayers data
-// format the hijri date string from api object
-const formatHijriDate = (date) => {
-  return `${date.hijri.day} - ${date.hijri.month.ar} / ${date.hijri.month.en} - ${date.hijri.year}`;
+// extract only the 5 allowed prayers timings from a day
+const extractTimings = day => {
+  return ALLOWED_PRAYERS.map(name => {
+    const timeStr = day.timings?.[name] || "";
+    // Remove timezone suffix like " (+00)" - keep only "HH:MM"
+    const cleanTime = timeStr.split(" ")[0];
+    return { name, time: cleanTime };
+  });
 };
 
-// build the timings array for allowed prayers
-const extractDayTimings = (day) => {
-  return ALLOWED_PRAYERS.map((prayer) => ({
-    name: prayer,
-    time: day.timings?.[prayer] || "",
+// Format full api month data for storage
+const formatForStorage = (apiData, lat, lon) => {
+  const prayers = apiData.map((day) => ({
+    date: day.date.readable,
+    timestamp: day.date.timestamp,
+    hijri: formatHijri(day.date),
+    timings: extractTimings(day),
   }));
-};
-
-// build the stored prayers meta object
-const buildStoredPrayersData = (extractedData, lat, lon) => {
   return {
     lastcoords: [lat, lon],
     year: new Date().getFullYear(),
     month: new Date().getMonth() + 1,
     lastFetched: Date.now(),
-    prayers: extractedData,
+    prayers,
   };
 };
 
-// format the data that we gonna store to only what we need
-const extractSotredData = (apidata, [lat, lon]) => {
-  const extractedData = apidata.map((day) => ({
-    date: day.date.readable,
-    timestamp: day.date.timestamp,
-    hijri: formatHijriDate(day.date),
-    timings: extractDayTimings(day),
-  }));
+// Get current time in seconds (api timestamps are in seconds)
+const nowSeconds = () => Math.floor(Date.now() / 1000);
 
-  return buildStoredPrayersData(extractedData, lat, lon);
-};
-
-// get the prayers array from localstorage
-const getPrayersFromStorage = () => {
-  const storedPrayers = loadData(PRAYERS_STORAGE_KEY, null);
-  if (!storedPrayers) return null;
-  return storedPrayers.prayers;
-};
-
-// get current timestamp in seconds
-const getNowInSeconds = () => {
-  // Get current time in seconds becasue api timestamp is in seconds not milliseconds
-  return Math.floor(Date.now() / 1000);
-};
-
-// find index of today in stored prayers list
-const findTodayIndex = (prayers, nowInSeconds) => {
-  // check if our now is between the start of the day and the end using the api timestamp to get the day
+// Find today's index in the stored prayers array
+const findTodayIndex = (prayers) => {
+  const now = nowSeconds();
   return prayers.findIndex((p) => {
     const start = Number(p.timestamp);
-    const end = start + 86400;
-    // 86400 seconds = 24 hours
-    return nowInSeconds >= start && nowInSeconds < end;
+    return now >= start && now < start + 86400; // 86400s = 24h
   });
 };
 
-// get today prayers and tomorrow prayers objects
-const getTodayAndTomorrowPrayers = (prayers, todayIndex) => {
-  const todayPrayers = prayers[todayIndex];
-  const tomorrowPrayers = prayers[todayIndex + 1] || null;
-  return { todayPrayers, tomorrowPrayers };
+// Load today's prayers + tomorrow's fajr from storage into memory
+const prepareTodayPrayers = () => {
+  const stored = loadPrayers();
+  if (!stored) return;
+
+  const idx = findTodayIndex(stored.prayers);
+  if (idx === -1) return;
+
+  const today = stored.prayers[idx];
+  const tomorrow = stored.prayers[idx + 1] || null;
+
+  todayPrayers = [...today.timings];
+  // add tomorrow's fajr so the next prayer
+  if (tomorrow) todayPrayers.push(tomorrow.timings[0]);
 };
 
-// build all prayers list including tomorrow fajr
-const getAllPrayersWithTomorrowFajr = (todayPrayers, tomorrowPrayers) => {
-  const allPrayers = [...todayPrayers.timings];
-  // Add tommorow's Fajr
-  if (tomorrowPrayers) {
-    allPrayers.push(tomorrowPrayers.timings[0]);
-  }
-  return allPrayers;
+// Parse "HH:MM (TZ)" string into hour and min numbers
+const parseTime = (timeStr) => {
+  const [hour, min] = timeStr.split(" ")[0].split(":");
+  return { hour: Number(hour), min: Number(min) };
 };
 
-// get time left for a given timestamp
-export const getTimeLeft = (timestamp) => {
-  const now = Date.now();
-  const diff = timestamp - now;
-  if (diff <= 0) return { hours: null, mins: null };
+// Build a ms timestamp for a prayer time today
+const toTimestamp = (hour, min) => new Date().setHours(hour, min, 0, 0);
 
-  const MS_PER_MINUTE = 1000 * 60;
-  const MS_PER_HOUR = MS_PER_MINUTE * 60;
-
-  const hours = Math.floor(diff / MS_PER_HOUR);
-  const mins = Math.floor((diff % MS_PER_HOUR) / MS_PER_MINUTE);
-  return { hours, mins };
-};
-
-// Function to bridge the UI and the background Service Worker/Script
-const scheduleNextPrayerBackgroundNotification = (timestamp, name) => {
-
-  // Determine the API namespace Chrome uses 'chrome' while Firefox uses 'browser'
-  const browserApi = typeof chrome !== "undefined" ? chrome : browser;
-
-  // Verify that the communication channel (runtime.sendMessage) is available if it not available then we just stop
-  if (!browserApi.runtime?.sendMessage) return;
-
-  console.log(`[UI] Sending message to background for: ${name} at ${timestamp}`);
-
-  // Send a message object to the Background Script/Service Worker
-  browserApi.runtime.sendMessage({
-    type: "SCHEDULE_NEXT_PRAYER",
-    payload: { timestamp, name },
-  });
-};
-
-// display current prayers in ui
-const displayPrayers = () => {
-  const prayers = getPrayersFromStorage();
-  
-  scheduleNextPrayerBackgroundNotification(Date.now() + 10000, "DEBUG_TEST");
-  
-  if (!prayers) return;
-
-  const nowInSeconds = getNowInSeconds();
-  const todayIndex = findTodayIndex(prayers, nowInSeconds);
-  if (todayIndex === -1) return null;
-
-  const { todayPrayers, tomorrowPrayers } = getTodayAndTomorrowPrayers(
-    prayers,
-    todayIndex
-  );
-  const allPrayers = getAllPrayersWithTomorrowFajr(
-    todayPrayers,
-    tomorrowPrayers
-  );
-
-  const categorizedPrayers = groupPrayers(allPrayers);
-
-  const nextPrayer = categorizedPrayers.find((p) => p.type === "next");
-  if (!nextPrayer) return;
-
-  const { hours, mins } = getTimeLeft(nextPrayer.timestamp);
-
-  renderAllPrayers(categorizedPrayers);
-  renderNextPrayer(nextPrayer.name, hours, mins);
-  // scheduleNextPrayerBackgroundNotification(nextPrayer.timestamp, nextPrayer.name);
-};
-
-// split time string to hour and min
-const splitPrayerTime = (time) => {
-  const prayerTime = time.split(" ")[0];
-  const [prayerHour, prayerMin] = prayerTime.split(":");
-  return { prayerTime, prayerHour, prayerMin };
-};
-
-// create date timestamp from hour and min
-const createPrayerTimestamp = (prayerHour, prayerMin) => {
-  return new Date().setHours(Number(prayerHour), Number(prayerMin));
-};
-
-// adjust timestamp for last prayer (tomorrow fajr)
-const adjustLastPrayerTimestamp = (timestamp, index, totalPrayers, now) => {
-  // Last prayer in list is tomorrow's Fajr - add 24h if it's in the past
-  if (index === totalPrayers - 1 && timestamp < now) {
+// Tomorrow's fajr is the last item — if it already passed today add 24h
+const fixTomorrowFajr = (timestamp, isLast) => {
+  if (isLast && timestamp < Date.now()) {
     return timestamp + 24 * 60 * 60 * 1000;
   }
   return timestamp;
 };
 
-// decide if prayer is passed, next or upcoming
-const getPrayerType = (now, prayerTimestamp, nextPrayerDetected, currentType) => {
-  let prayerType = currentType;
-  let hasDetectedNext = nextPrayerDetected;
+// Mark each prayer as "passed" / "next" / "upcoming"
+const categorizePrayers = (prayers) => {
+  const now = Date.now();
+  let foundNext = false;
 
-  if (now < prayerTimestamp) {
-    // The prayer is upcoming
-    if (hasDetectedNext) {
-      prayerType = "upcoming";
+  return prayers.map((prayer, i) => {
+    const { hour, min } = parseTime(prayer.time);
+    let timestamp = toTimestamp(hour, min);
+    timestamp = fixTomorrowFajr(timestamp, i === prayers.length - 1);
+
+    let type;
+    if (timestamp > now) {
+      type = foundNext ? "upcoming" : "next";
+      if (!foundNext) foundNext = true;
     } else {
-      prayerType = "next";
-      hasDetectedNext = true;
+      type = "passed";
     }
-  } else {
-    prayerType = "passed";
+
+    return { ...prayer, timestamp, type };
+  });
+};
+
+// Get hours and mins remaining until a timestamp
+export const getTimeLeft = (timestamp) => {
+  const diff = timestamp - Date.now();
+  if (diff <= 0) return { hours: null, mins: null };
+  const hours = Math.floor(diff / 3600000);
+  const mins = Math.floor((diff % 3600000) / 60000);
+  return { hours, mins };
+};
+
+// Send prayer timestamps to background so it can schedule alarms
+const scheduleAlarms = (categorized) => {
+  const browserApi = typeof chrome !== "undefined" ? chrome : browser;
+  if (!browserApi.runtime?.sendMessage) return;
+
+  // only send prayers that haven't passed yet
+  const upcoming = categorized
+    .filter((p) => p.type !== "passed")
+    .map((p) => ({ name: p.name, timestamp: p.timestamp }));
+
+  browserApi.runtime.sendMessage({ type: "SCHEDULE_PRAYER_ALARMS", payload: upcoming });
+};
+
+// ms remaining until next midnight
+const msUntilMidnight = () => {
+  const midnight = new Date();
+  midnight.setHours(24, 0, 0, 0);
+  return midnight - Date.now();
+};
+
+// Refresh cache, render ui, schedule all alarms
+const dailySetup = () => {
+  prepareTodayPrayers();
+  if (!todayPrayers) return;
+
+  const categorized = categorizePrayers(todayPrayers);
+  renderAllPrayers(categorized);
+  scheduleAlarms(categorized);
+
+  const next = categorized.find((p) => p.type === "next");
+  if (next) {
+    const { hours, mins } = getTimeLeft(next.timestamp);
+    renderNextPrayer(next.name, hours, mins);
   }
 
-  return { prayerType, nextPrayerDetected: hasDetectedNext };
+  // clear old timer and set a new one for next midnight
+  if (midnightTimer) {
+    clearTimeout(midnightTimer)
+  };
+  midnightTimer = setTimeout(dailySetup, msUntilMidnight());
 };
 
-// group today prayers with type and timestamps
-const groupPrayers = (todayPrayers) => {
-  let nextPrayerDetected = false;
-  let prayerType = "passed";
-  const now = new Date().getTime();
 
-  const prayersTimes = todayPrayers.map((prayer, index) => {
-    const { prayerTime, prayerHour, prayerMin } = splitPrayerTime(prayer.time);
+// Re-categorize from cache and update ui countdown
+const minuteUpdate = () => {
+  if (!todayPrayers) return;
 
-    let prayerTimestamp = createPrayerTimestamp(prayerHour, prayerMin);
-    prayerTimestamp = adjustLastPrayerTimestamp(
-      prayerTimestamp,
-      index,
-      todayPrayers.length,
-      now
-    );
+  const categorized = categorizePrayers(todayPrayers);
+  renderAllPrayers(categorized); // update passed/next/upcoming states
 
-    const typeInfo = getPrayerType(
-      now,
-      prayerTimestamp,
-      nextPrayerDetected,
-      prayerType
-    );
+  const next = categorized.find((p) => p.type === "next");
+  if (!next) return;
 
-    prayerType = typeInfo.prayerType;
-    nextPrayerDetected = typeInfo.nextPrayerDetected;
-
-    return {
-      name: prayer.name,
-      timestamp: prayerTimestamp,
-      time: prayerTime,
-      hour: prayerHour,
-      min: prayerMin,
-      type: prayerType,
-    };
-  });
-
-  return prayersTimes;
+  const { hours, mins } = getTimeLeft(next.timestamp);
+  renderNextPrayer(next.name, hours, mins);
 };
 
-// build api url for calendar endpoint
-const buildCalendarUrl = (year, month, lat, lon) => {
+
+// Build api url for a given month
+const buildApiEndpoint = (year, month, lat, lon) => {
   return `https://api.aladhan.com/v1/calendar/${year}/${month}?latitude=${lat}&longitude=${lon}`;
 };
 
-// get current date info (year, month)
-const getCurrentDateInfo = () => {
+// Fetch current month + first day of next month then save and refresh ui
+export const fetchPrayers = async (lat, lon) => {
   const now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth() + 1;
-  return { now, year, month };
-};
 
-// get next month year and month
-const getNextMonthInfo = (now) => {
-  // First day of next month (handle December → January)
   const nextMonthDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
   const nextYear = nextMonthDate.getFullYear();
   const nextMonth = nextMonthDate.getMonth() + 1;
-  return { nextYear, nextMonth };
-};
 
-// merge current month data with first day of next month
-const combineMonthData = (currentData, nextMonthData) => {
-  // Combine current month with first day of next month (if available)
-  let allDays = currentData.data;
-  if (nextMonthData?.data?.length) {
-    allDays = [...allDays, nextMonthData.data[0]];
-  }
-  return allDays;
-};
-
-// Fetch prayers from API (entire month + first day of next month)
-export const fetchPrayers = async (lat, lon) => {
-  const { now, year, month } = getCurrentDateInfo();
-
-  // Current month data
-  const currentMonthUrl = buildCalendarUrl(year, month, lat, lon);
-
-  const { nextYear, nextMonth } = getNextMonthInfo(now);
-  const nextMonthUrl = buildCalendarUrl(nextYear, nextMonth, lat, lon);
-
-  const [currentData, nextMonthData] = await Promise.all([
-    fetchData(currentMonthUrl),
-    fetchData(nextMonthUrl),
+  const [current, next] = await Promise.all([
+    fetchData(buildApiEndpoint(year, month, lat, lon)),
+    fetchData(buildApiEndpoint(nextYear, nextMonth, lat, lon)),
   ]);
 
-  if (!currentData?.data) {
-    return;
-  }
+  if (!current?.data) return;
 
-  const allDays = combineMonthData(currentData, nextMonthData);
+  // combine current month with first day of next month for tomorrow's fajr at month end
+  const allDays = next?.data?.length
+    ? [...current.data, next.data[0]]
+    : current.data;
 
-  const monthPrayers = extractSotredData(allDays, [lat, lon]);
-  savePrayersData(monthPrayers);
-  displayPrayers();
+  savePrayers(formatForStorage(allDays, lat, lon));
+
+  // re-run daily setup now that we have fresh data
+  dailySetup();
 };
 
-// Check if stored prayers are from different month or year
-const isDifferentYearOrMonth = (stored) => {
+// Check if stored data is from a different month or year
+const isOldData = (stored) => {
   const now = new Date();
-  return (
-    stored.year !== now.getFullYear() ||
-    stored.month !== now.getMonth() + 1
-  );
+  return stored.year !== now.getFullYear() || stored.month !== now.getMonth() + 1;
 };
 
-// check if saved coords are different from current
-const hasCoordsChanged = (stored, coords) => {
-  const [lat, lon] = coords;
-  return (
-    stored.lastcoords?.[0] !== lat || stored.lastcoords?.[1] !== lon
-  );
+// Check if the user has moved (coords changed)
+const isCoordsChanged = (stored, coords) => {
+  return stored.lastcoords?.[0] !== coords[0] || stored.lastcoords?.[1] !== coords[1]
 };
 
-// Check if we should fetch new data (1 month since last fetch)
-const shouldFetchNewData = (coords) => {
-  const stored = loadData(PRAYERS_STORAGE_KEY, null);
+// Return true if we need to call the api again
+const needsFetch = (coords) => {
+  const stored = loadPrayers();
   if (!stored) return true;
-  return isDifferentYearOrMonth(stored) || hasCoordsChanged(stored, coords);
+  return isOldData(stored) || isCoordsChanged(stored, coords);
 };
 
-// Initialize prayers logic
+// init praeyrs logic
 export const initPrayers = () => {
   const coords = loadData("location", null);
   if (!coords) return;
 
-  displayPrayers();
+  dailySetup();                          // render today + schedule alarms
+  setInterval(minuteUpdate, 60 * 1000); // update countdown every minute
 
   const [lat, lon] = coords;
-  if (shouldFetchNewData(coords)) {
-    fetchPrayers(lat, lon);
-  }
+  if (needsFetch(coords)) {
+    fetchPrayers(lat, lon)
+  };
 };
-
-// every minute call the function to update the ui
-setInterval(displayPrayers, 1000 * 60);
