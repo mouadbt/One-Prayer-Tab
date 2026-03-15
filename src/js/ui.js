@@ -265,11 +265,15 @@ export const renderAyah = (ayah) => {
 }
 
 export const showPlayingAyahError = () => {
+  const playingAyahErrorToast  = document.querySelector('#playing-ayah-error-toast');
+
+  if(playingAyahErrorToast) return;
   // Create a new div element
   const toast = document.createElement('div');
 
   // Set Tailwind CSS classes for styling
   toast.className = 'fixed bottom-4 left-1/2 w-10/12 max-w-sm rounded-3xl p-4 text-center text-(--background100)! bg-(--foreground100)! -translate-x-[50%] z-50 text-sm! opacity-50';
+  toast.setAttribute('id','playing-ayah-error-toast');
 
   // Create a text node and append it to the toast
   const text = document.createTextNode('Error playing ayah. Check internet or change reciter. Report if persists.');
