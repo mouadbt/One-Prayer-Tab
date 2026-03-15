@@ -2,6 +2,7 @@
 
 :root {
     --background100: oklab(20.992% -0.0039 -0.03394);
+    --backgroundFilled: oklab(0.21 0 -0.03);
     --background50: oklch(28.073% 0.03805 270.996);
     --foreground25: oklab(100% 0 0/0.25);
     --foreground50: oklab(100% 0 0/0.5);
@@ -78,6 +79,7 @@
             74.6528px 0.3359px,
             120px 0px);
 
+    --scrolling-animation-time: 20s;
 }
 
 @font-face {
@@ -697,24 +699,61 @@ body.dark .sunMoonThemeToggleBtn svg .sunRay {
 
 
 
+/* --------------------------------------- Map controlls */
 .leaflet-control-layers-toggle {
     background-size: var(--space-xs);
 }
 
 
+/* --------------------------------------- Ayah audio controls */
+.animate-spin {
+    transform-origin: center;
+}
 
-#toggle-ayah-playing svg {
-    position: absolute;
-    transform: scale(0.7);
+#toggle-ayah-playing span {
     transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
-.icon-not-active{
+#toggle-ayah-playing .icon-not-active {
+    transform: scale(0.7);
+    position: absolute;
     opacity: 0;
 }
 
-/* active icon */
-#toggle-ayah-playing svg.icon-active {
+#toggle-ayah-playing .icon-active {
     opacity: 1;
     transform: scale(1);
+}
+
+
+/* --------------------------------------- Reciters long Names horizontal scroll  */
+.scrolledReciterName span {
+    white-space: nowrap;
+    animation: scroll2 var(--scrolling-animation-time) linear infinite;
+    animation-delay: calc(var(--scrolling-animation-time)*-1);
+}
+
+.scrolledReciterName span:nth-child(2) {
+    animation: scroll var(--scrolling-animation-time) linear infinite;
+    animation-delay: calc(var(--scrolling-animation-time)/-2);
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes scroll2 {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-200%);
+    }
 }

@@ -3,7 +3,7 @@ import { loadData, saveData, toggleClassName } from './utils.js';
 
 // Define the tasks list
 let tasks = [];
-
+let deleteSvgIcon = null;
 export const initTasks = (icons) => {
 
     // get the Todo Items
@@ -16,7 +16,7 @@ export const initTasks = (icons) => {
     ]);
 
     // Get the delete svg icon
-    const deleteSvgIcon = icons?.close?.content;
+    deleteSvgIcon = icons?.close?.content;
 
     // Render TodoItems
     tasks.forEach((task) => {
@@ -53,18 +53,18 @@ export const initTaskEvents = () => {
 
 // Add new Task
 export const handleAddNewTask = (taskInput) => {
-    addNewTask(taskInput)
+    addNewTask(taskInput,deleteSvgIcon)
 }
 
 // Add a new task
-export const addNewTask = (taskInput) => {
+export const addNewTask = (taskInput,deleteSvgIcon) => {
     const taskContent = taskInput.value.trim();
     if (!taskContent) return;
     const id = "taskItem" + Date.now();
     const task = { id, text: taskContent, done: false }
     tasks.push(task);
     saveData('tasks', tasks);
-    renderTask(task);
+    renderTask(task,deleteSvgIcon);
     taskInput.value = '';
 }
 

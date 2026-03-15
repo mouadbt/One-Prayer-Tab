@@ -12,6 +12,7 @@ let ayahData = [];        // [{arabic, tafsir, number}] – full quran
 let currentIndex = 0;     // index inside ayahData (daily ayah)
 let audio = null;         // Audio instance
 let isPlaying = false;
+let isLoading = false;    // loading/buffering state
 
 export async function initAyah() {
   // Load the quran and verses data
@@ -24,6 +25,9 @@ export async function initAyah() {
   displayeAyah();
 
   bindControls();
+
+  // Initialize the play icon
+  updateAyahPlayingIcon();
 
   // preloadAudio(currentIndex);
 }
@@ -114,6 +118,38 @@ export const navigateBetweenVerses = (action) => {
   }
 }
 
+const getSelectedReciter = () => {
+  return loadData('selectedReciter', 'ar.husarymujawwad');
+}
+
+const audioUrl = (index) => {
+  const globalNum = ayahData[index]?.global ?? index + 1;
+  const reciter = getSelectedReciter();
+  return `${AUDIO_BASE_URL}${reciter}/${globalNum}.mp3`;
+}
+
+const updateAyahPlayingIcon = () => {
+  const playIcon = document.querySelector('#play-ayah');
+  const pauseIcon = document.querySelector('#pause-ayah');
+  const loadingIcon = document.querySelector('#loading-ayah');
+
+  if (!playIcon || !pauseIcon || !loadingIcon) return;
+
+  // Reset all icons to not-active
+  [playIcon, pauseIcon, loadingIcon].forEach(icon => {
+    icon.classList.remove('icon-active');
+    icon.classList.add('icon-not-active');
+  });
+
+  // Activate the appropriate icon based on state
+  const activeIcon = isLoading ? loadingIcon
+    : isPlaying ? pauseIcon
+    : playIcon;
+
+  activeIcon.classList.remove('icon-not-active');
+  activeIcon.classList.add('icon-active');
+}
+
 export const onPlayToggle = () => {
   if (isPlaying) {
     stopAudio();
@@ -127,20 +163,14 @@ const stopAudio = () => {
     audio.pause();
   }
   isPlaying = false;
-}
-
-const getSelectedReciter = () => {
-  return loadData('selectedReciter', 'ar.husarymujawwad');
-}
-
-const audioUrl = (index) => {
-  const globalNum = ayahData[index]?.global ?? index + 1;
-  const reciter = getSelectedReciter();
-  return `${AUDIO_BASE_URL}${reciter}/${globalNum}.mp3`;
+  updateAyahPlayingIcon();
 }
 
 const playAyah = () => {
   const url = audioUrl(currentIndex);
+
+  isLoading = true;
+  updateAyahPlayingIcon();
 
   if (!audio) {
     audio = new Audio(url);
@@ -156,11 +186,18 @@ const playAyah = () => {
     audio.load();
   }
 
-  audio.play().then(() => {
+  audio.oncanplaythrough = () => {
+    isLoading = false;
     isPlaying = true;
+    updateAyahPlayingIcon();
+  };
+
+  audio.play().then(() => {
   }).catch(err => {
+    isLoading = false;
     isPlaying = false;
+    updateAyahPlayingIcon();
     showPlayingAyahError();
     console.warn("[Ayah] play error", err);
   });
-};  
+}

@@ -159,14 +159,24 @@ export const setupGlobalListeners = (engines, settings) => {
             }
         });
         recitersList.addEventListener('click', (e) => {
-            if (e.target.tagName === 'BUTTON') {
-                const input = e.target.querySelector('input');
-                if (input && input.name === 'reciter') {
-                    // uncheck all other reciters
-                    recitersList.querySelectorAll('input[name="reciter"]').forEach(r => r.checked = false);
-                    input.checked = true;
-                    saveData('selectedReciter', input.id);
-                }
+            const button = e.target.closest('button');
+            if (!button) return;
+            
+            const input = button.querySelector('input');
+            const spanEl = button.querySelector('span');
+            if (input && input.name === 'reciter') {
+                e.preventDefault();
+                // uncheck all other reciters and add low-opacity to their spans
+                recitersList.querySelectorAll('input[name="reciter"]').forEach(inputItem => {
+                    inputItem.checked = false;
+                    const btn = inputItem.parentElement;
+                    const span = btn.querySelector('span');
+                    if (span) span.classList.add('low-opacity');
+                });
+                // check the clicked reciter and remove low-opacity from its span
+                input.checked = true;
+                spanEl.classList.remove('low-opacity');
+                saveData('selectedReciter', input.id);
             }
         });
     }

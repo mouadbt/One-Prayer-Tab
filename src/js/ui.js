@@ -1,4 +1,4 @@
-import { toggleClassName, saveData } from "./utils.js";
+import { toggleClassName, saveData, loadData } from "./utils.js";
 
 // render the settings options & search engines in the settings panel
 export const renderSettings = (settings, engines, icons, reciters) => {
@@ -49,6 +49,7 @@ const renderPreferedEngineIcon = (key) => {
 export const buildTheSvgIcon = (svgIconContent, btn, withDimensions) => {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("viewBox", "0 0 24 24");
+  svg.setAttribute("fill", "none");
   if (withDimensions) {
     svg.setAttribute("width", "20px");
     svg.setAttribute("height", "20px");
@@ -104,12 +105,13 @@ const createOptionElement = (option, icons, container) => {
 // render reciters in the reciters list
 export const renderReciters = (reciters, icons) => {
   const recitersContainer = document.querySelector("#reciters-list");
-  const storedReciter = localStorage.getItem('selectedReciter');
+  const storedReciter = loadData('selectedReciter', null);
   const currentReciter = storedReciter || 'ar.husarymujawwad';
 
   reciters.forEach(reciter => {
     const liEl = document.createElement("li");
     const btnEl = document.createElement("button");
+    btnEl.className = 'max-w-full w-full';
 
     const inputEl = document.createElement("input");
     inputEl.type = "radio";
@@ -119,8 +121,10 @@ export const renderReciters = (reciters, icons) => {
 
     const labelEl = document.createElement("label");
     labelEl.setAttribute("for", reciter.identifier);
+    labelEl.className = 'overflow-x-auto max-w-full w-full';
 
     const checkDiv = document.createElement("div");
+    checkDiv.className = 'relative after:w-[200%] after:h-[125%] after:absolute after:inset-0 after:bg-gradient-to-r after:from-(--backgroundFilled) after:via-(--backgroundFilled) after:to-transparent [&_svg]:z-50 after:z-10 [&_svg]:translate-x-1/8 [&_svg]:translate-y-1/8'
     toggleClassName(checkDiv, 'check', 'add');
 
     const iconData = icons["check"];
@@ -130,6 +134,8 @@ export const renderReciters = (reciters, icons) => {
 
     const spanEl = document.createElement("span");
     spanEl.textContent = `${reciter.englishName} - ${reciter.name}`;
+    spanEl.className = 'whitespace-nowrap text-right w-fit! ml-auto px-1';
+    spanEl.classList.toggle('low-opacity', !inputEl.checked);
 
     labelEl.appendChild(checkDiv);
     labelEl.appendChild(spanEl);
@@ -139,7 +145,27 @@ export const renderReciters = (reciters, icons) => {
     liEl.appendChild(btnEl);
 
     recitersContainer.appendChild(liEl);
+    setTimeout(() => {
+      const islong = isALongReciterName(spanEl, recitersContainer);
+      if (islong) {
+        labelEl.appendChild(spanEl);
+        const secondSpan = spanEl.cloneNode(true);
+        secondSpan.setAttribute('aria-hidden', true);
+        labelEl.appendChild(secondSpan);
+      }
+      labelEl.classList.toggle('scrolledReciterName', islong);
+    }, 1000);
   });
+}
+
+const isALongReciterName = (span, container) => {
+  const spanRect = span.getBoundingClientRect();
+  const spanWidth = spanRect.width;
+
+  const containerRect = container.getBoundingClientRect();
+  const containerWidth = containerRect.width;
+
+  return containerWidth - spanWidth < 80;
 }
 
 // Render TodoLists in page
@@ -162,7 +188,7 @@ export const renderTask = (task, svgIconContent) => {
   labelEl.textContent = task.text;
 
   const removeBtn = document.createElement('button');
-  removeBtn.className = 'task-remove-action';
+  removeBtn.className = 'task-remove-action text-center flex items-center justify-center';
   removeBtn.dataset.icon = 'close';
   removeBtn.dataset.remove = task.id;
   removeBtn.title = 'Click to remove task';
@@ -226,54 +252,18 @@ export const renderAyah = (ayah) => {
   ayahInfo.textContent = `${ayah.surah} · الآية ${ayah.number}`;
   ayahEL.textContent = `﴿${ayah.arabic}﴾`;
   ayahTafsir.textContent = `${ayah.tafsir}`;
-  // el.innerHTML = `
-  //   <div class="ayah-header">
-  //     <h3>Today's Ayah</h3>
-  //   </div>
-
-  //   <div class="ayah-meta" dir="rtl" lang="ar">${ayah.surah} · الآية ${ayah.number}</div>
-
-  //   <p class="ayah-arabic" dir="rtl" lang="ar">${ayah.arabic}</p>
-
-  //   <div class="ayah-tafsir-wrap">
-  //     <p class="ayah-tafsir">${ayah.tafsir}</p>
-  //   </div>
-
-  //   <div class="ayah-controls">
-  //     <button class="ayah-btn" id="ayah-prev" title="Previous Ayah">
-  //       ${svgPrev()}
-  //     </button>
-
-  //     <button class="ayah-btn ayah-play-btn" id="ayah-play" title="Play Recitation">
-  //       ${svgPlay()}
-  //     </button>
-
-  //     <button class="ayah-btn" id="ayah-next" title="Next Ayah">
-  //       ${svgNext()}
-  //     </button>
-
-  //     <button class="ayah-btn" id="ayah-copy" title="Copy Ayah">
-  //       ${svgCopy()}
-  //     </button>
-  //   </div>
-
-  //   <div class="ayah-copy-toast" id="ayah-copy-toast">Copied!</div>
-  // `;
-
-  // bindControls();
-  // preloadAudio(currentIndex);
 }
 
 export const showPlayingAyahError = () => {
-  const playingAyahErrorToast  = document.querySelector('#playing-ayah-error-toast');
+  const playingAyahErrorToast = document.querySelector('#playing-ayah-error-toast');
 
-  if(playingAyahErrorToast) return;
+  if (playingAyahErrorToast) return;
   // Create a new div element
   const toast = document.createElement('div');
 
   // Set Tailwind CSS classes for styling
   toast.className = 'fixed bottom-4 left-1/2 w-10/12 max-w-sm rounded-3xl p-4 text-center text-(--background100)! bg-(--foreground100)! -translate-x-[50%] z-50 text-sm! opacity-50';
-  toast.setAttribute('id','playing-ayah-error-toast');
+  toast.setAttribute('id', 'playing-ayah-error-toast');
 
   // Create a text node and append it to the toast
   const text = document.createTextNode('Error playing ayah. Check internet or change reciter. Report if persists.');
@@ -282,10 +272,10 @@ export const showPlayingAyahError = () => {
   // Append the toast to the body of the document
   document.body.appendChild(toast);
 
-  // Remove the toast after 20 seconds
+  // Remove the toast after 15 seconds
   setTimeout(() => {
     removeElement(toast);
-  }, 20000);
+  }, 15000);
 
   toast.addEventListener('click', () => {
     removeElement(toast);
