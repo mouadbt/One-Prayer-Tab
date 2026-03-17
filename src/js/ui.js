@@ -272,10 +272,10 @@ export const showPlayingAyahError = () => {
   // Append the toast to the body of the document
   document.body.appendChild(toast);
 
-  // Remove the toast after 15 seconds
+  // Remove the toast after 10 seconds
   setTimeout(() => {
     removeElement(toast);
-  }, 15000);
+  }, 10000);
 
   toast.addEventListener('click', () => {
     removeElement(toast);
