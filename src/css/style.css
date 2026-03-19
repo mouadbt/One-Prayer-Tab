@@ -349,7 +349,8 @@ body.dark .sunMoonThemeToggleBtn svg .sunRay {
 }
 
 #settings-panel #settings-options input,
-#settings-panel #reciters-list input {
+#settings-panel #reciters-list input,
+#settings-panel #muadhins-list input {
     display: none;
 }
 
@@ -369,14 +370,16 @@ body.dark .sunMoonThemeToggleBtn svg .sunRay {
 }
 
 #settings-panel .check,
-#settings-panel #reciters-list .check {
+#settings-panel #reciters-list .check,
+#settings-panel #muadhins-list .check {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 #settings-panel .check svg,
-#settings-panel #reciters-list .check svg {
+#settings-panel #reciters-list .check svg,
+#settings-panel #muadhins-list .check svg {
     stroke: var(--foreground100);
     stroke-width: 1.5;
 }
@@ -399,18 +402,21 @@ body.dark .sunMoonThemeToggleBtn svg .sunRay {
 }
 
 #settings-panel #settings-options input:checked+label .check svg path,
-#settings-panel #reciters-list input:checked+label .check svg path {
+#settings-panel #reciters-list input:checked+label .check svg path,
+#settings-panel #muadhins-list input:checked+label .check svg path {
     stroke-dashoffset: 60;
     transition-delay: 0s;
 }
 
 #settings-panel #settings-options input:checked+label .check svg polyline,
-#settings-panel #reciters-list input:checked+label .check svg polyline {
+#settings-panel #reciters-list input:checked+label .check svg polyline,
+#settings-panel #muadhins-list input:checked+label .check svg polyline {
     stroke-dashoffset: 42;
     transition-delay: 0.2s;
 }
 
-#settings-panel #reciters-list input:not(:checked)+label .check svg polyline {
+#settings-panel #reciters-list input:not(:checked)+label .check svg polyline,
+#settings-panel #muadhins-list input:not(:checked)+label .check svg polyline {
     stroke-dashoffset: 66;
 }
 

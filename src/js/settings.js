@@ -7,6 +7,11 @@ export const applySystemSetting = (key, isActive) => {
             isActive && focusOnSearchInput(document.querySelector("#search-input"));
             break;
 
+        case 'enableNotifications':
+            // Store the setting value so prayers.js can check it
+            saveData('enableNotifications', isActive);
+            break;
+
         default:
             // no-op
             break;

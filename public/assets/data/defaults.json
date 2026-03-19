@@ -56,6 +56,12 @@
       "active": true,
       "key": "focusOnLoad",
       "regular": true
+    },
+    {
+      "label": "Enable prayer notifications",
+      "active": true,
+      "key": "enableNotifications",
+      "regular": true
     }
   ],
   "reciters": [
@@ -158,6 +164,26 @@
       "identifier": "ar.aymanswoaid",
       "name": "أيمن سويد",
       "englishName": "Ayman Sowaid"
+    }
+  ],
+  "muadhins": [
+    {
+      "identifier": "muhammad-bin-marwan",
+      "name": "محمد بن مروان",
+      "englishName": "Muhammad bin Marwan Qassas",
+      "file": "Muhammad-bin-Marwan-Qassas.opus"
+    },
+    {
+      "identifier": "muhammad-jazy",
+      "name": "محمد جازي",
+      "englishName": "Muhammad Jazy Abdullah",
+      "file": "Muhammad-Jazy-Abdullah.opus"
+    },
+    {
+      "identifier": "islam-subhi",
+      "name": "إسلام صبحي",
+      "englishName": "Islam Subhi",
+      "file": "islam-subhi.m4a"
     }
   ]
 }

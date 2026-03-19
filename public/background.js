@@ -1,6 +1,7 @@
 const browserApi = typeof chrome !== "undefined" ? chrome : browser;
 const isFirefox = typeof browser !== "undefined";
 let currentAudio = null;
+let selectedMuadhinFile = "islam-subhi.m4a"; // default filename
 
 // Make sure offscreen doc exists before sending it a message (chrome only)
 const ensureOffscreen = async () => {
@@ -27,7 +28,7 @@ const showNotification = (id, title, message) => {
 // Firefox supports Audio API directly in the background script, no offscreen document needed
 const playSoundOnFirefoxBasedBrwosers = (type) => {
   if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
-  const file = type === "PLAY_ATHAN" ? "assets/audio/islam-subhi.m4a" : "assets/audio/ring.mp3";
+  const file = type === "PLAY_ATHAN" ? `assets/audio/${selectedMuadhinFile}` : "assets/audio/ring.mp3";
   currentAudio = new Audio(browserApi.runtime.getURL(file));
   currentAudio.onended = () => { currentAudio = null; };
   currentAudio.play().catch((err) => console.error("Audio error:", err));
@@ -37,7 +38,7 @@ const playSoundOnFirefoxBasedBrwosers = (type) => {
 const playSound = async (type) => {
   if (!isFirefox) {
     await ensureOffscreen();
-    browserApi.runtime.sendMessage({ type });
+    browserApi.runtime.sendMessage({ type, muadhinFile: selectedMuadhinFile });
   } else {
     playSoundOnFirefoxBasedBrwosers(type);
   }
@@ -70,6 +71,10 @@ browserApi.runtime.onMessage.addListener(async (msg) => {
       browserApi.alarms.create(`prayer:${prayer.name}`, { when: prayer.timestamp });
       browserApi.alarms.create(`reminder:${prayer.name}`, { when: prayer.timestamp - 5 * 60 * 1000 });
     });
+  }
+  // Receive selected muadhin from the page
+  if (msg.type === "SET_MUADHIN") {
+    selectedMuadhinFile = msg.muadhinFile;
   }
 })
 

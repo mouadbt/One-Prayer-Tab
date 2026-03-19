@@ -126,8 +126,27 @@ const getTimeLeft = (timestamp) => {
 
 // Send prayer timestamps to background so it can schedule alarms
 const scheduleAlarms = (categorized) => {
+  // Check if notifications are enabled
+  const enableNotifications = loadData('enableNotifications', true);
+  if (!enableNotifications) return;
+
   const browserApi = typeof chrome !== "undefined" ? chrome : browser;
   if (!browserApi.runtime?.sendMessage) return;
+
+  // Get selected muadhin identifier and find full filename from defaults
+  const selectedMuadhinId = loadData('selectedMuadhin', 'islam-subhi');
+  const muadhins = loadData('muadhins', null);
+  let selectedMuadhinFile = 'islam-subhi.m4a'; // default
+  
+  if (muadhins) {
+    const muadhin = muadhins.find(m => m.identifier === selectedMuadhinId);
+    if (muadhin) {
+      selectedMuadhinFile = muadhin.file;
+    }
+  }
+
+  // Send muadhin selection to background
+  browserApi.runtime.sendMessage({ type: "SET_MUADHIN", muadhinFile: selectedMuadhinFile });
 
   // only send prayers that haven't passed yet
   const upcoming = categorized

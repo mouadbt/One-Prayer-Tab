@@ -3,7 +3,7 @@ import { renderEngines, renderIcons } from "./ui.js";
 import { applyAllSettings } from "./settings.js";
 import { setupGlobalListeners } from "./events.js";
 import { initSuggestionsLogic } from "./suggestions.js";
-import { renderSettings } from "./ui.js";
+import { renderSettings, renderMuadhins } from "./ui.js";
 import { handleUserLocation } from "./location.js";
 import { initTasks } from "./todo.js";
 import { initClock } from "./time.js";
@@ -28,6 +28,9 @@ const init = async () => {
   // Get the reciters from default const
   const reciters = DEFAULTS.reciters;
 
+  // Get the muadhins from default const
+  const muadhins = DEFAULTS.muadhins;
+
   // Render the icons in the page
   renderIcons(icons);
 
@@ -36,6 +39,9 @@ const init = async () => {
 
   //  Render the settings in the page
   renderSettings(renderedSettings, engines, icons, reciters);
+
+  // Render the muadhins in the page
+  renderMuadhins(muadhins, icons);
 
   // Apply settings to the page element
   applyAllSettings(settings);

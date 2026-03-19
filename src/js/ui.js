@@ -102,25 +102,31 @@ const createOptionElement = (option, icons, container) => {
   container.appendChild(liEl);
 }
 
-// render reciters in the reciters list
-export const renderReciters = (reciters, icons) => {
-  const recitersContainer = document.querySelector("#reciters-list");
-  const storedReciter = loadData('selectedReciter', null);
-  const currentReciter = storedReciter || 'ar.husarymujawwad';
+// render reciters or muadhins list (generic function)
+export const renderAudioList = ({ containerId, storageKey, items, defaultItem, nameAttr }, icons) => {
+  const container = document.querySelector(`#${containerId}`);
+  const storedItem = loadData(storageKey, null);
+  const currentItem = storedItem || defaultItem;
 
-  reciters.forEach(reciter => {
+  // Remove extension from stored value for comparison
+  const currentItemBase = currentItem.replace('.m4a', '').replace('.opus', '');
+
+  items.forEach(item => {
     const liEl = document.createElement("li");
     const btnEl = document.createElement("button");
     btnEl.className = 'max-w-full w-full';
+    if (item.file) {
+      btnEl.dataset.muadhinFile = item.file;
+    }
 
     const inputEl = document.createElement("input");
     inputEl.type = "radio";
-    inputEl.name = "reciter";
-    inputEl.id = reciter.identifier;
-    inputEl.checked = reciter.identifier === currentReciter;
+    inputEl.name = nameAttr;
+    inputEl.id = item.identifier;
+    inputEl.checked = item.identifier === currentItemBase;
 
     const labelEl = document.createElement("label");
-    labelEl.setAttribute("for", reciter.identifier);
+    labelEl.setAttribute("for", item.identifier);
     labelEl.className = 'overflow-x-auto max-w-full w-full';
 
     const checkDiv = document.createElement("div");
@@ -133,7 +139,7 @@ export const renderReciters = (reciters, icons) => {
     }
 
     const spanEl = document.createElement("span");
-    spanEl.textContent = `${reciter.englishName} - ${reciter.name}`;
+    spanEl.textContent = `${item.englishName} - ${item.name}`;
     spanEl.className = 'whitespace-nowrap text-right w-fit! ml-auto px-1';
     spanEl.classList.toggle('low-opacity', !inputEl.checked);
 
@@ -144,9 +150,10 @@ export const renderReciters = (reciters, icons) => {
     btnEl.appendChild(labelEl);
     liEl.appendChild(btnEl);
 
-    recitersContainer.appendChild(liEl);
+    container.appendChild(liEl);
+    
     setTimeout(() => {
-      const islong = isALongReciterName(spanEl, recitersContainer);
+      const islong = isALongReciterName(spanEl, container);
       if (islong) {
         labelEl.appendChild(spanEl);
         const secondSpan = spanEl.cloneNode(true);
@@ -156,6 +163,28 @@ export const renderReciters = (reciters, icons) => {
       labelEl.classList.toggle('scrolledReciterName', islong);
     }, 1000);
   });
+}
+
+// render reciters in the reciters list
+export const renderReciters = (reciters, icons) => {
+  renderAudioList({
+    containerId: 'reciters-list',
+    storageKey: 'selectedReciter',
+    items: reciters,
+    defaultItem: 'ar.husarymujawwad',
+    nameAttr: 'reciter'
+  }, icons);
+}
+
+// render muadhins in the muadhins list
+export const renderMuadhins = (muadhins, icons) => {
+  renderAudioList({
+    containerId: 'muadhins-list',
+    storageKey: 'selectedMuadhin',
+    items: muadhins,
+    defaultItem: 'islam-subhi',
+    nameAttr: 'muadhin'
+  }, icons);
 }
 
 const isALongReciterName = (span, container) => {

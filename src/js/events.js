@@ -150,36 +150,76 @@ export const setupGlobalListeners = (engines, settings) => {
         });
     });
 
-    // handle reciter selection change
-    const recitersList = document.querySelector("#reciters-list");
-    if (recitersList) {
-        recitersList.addEventListener('change', (e) => {
-            if (e.target.tagName === 'INPUT' && e.target.name === 'reciter') {
-                saveData('selectedReciter', e.target.id);
+    // handle audio list selection change (reciters and muadhins)
+    const handleAudioListSelection = (listEl, storageKey, nameAttr, getMessageData) => {
+        if (!listEl) return;
+        
+        listEl.addEventListener('change', (e) => {
+            if (e.target.tagName === 'INPUT' && e.target.name === nameAttr) {
+                const value = e.target.id;
+                saveData(storageKey, value);
+                
+                // Notify background script if muadhin (need to get full filename)
+                if (storageKey === 'selectedMuadhin') {
+                    const button = e.target.closest('button');
+                    const muadhinFile = button?.dataset?.muadhinFile || value;
+                    const browserApi = typeof chrome !== "undefined" ? chrome : browser;
+                    if (browserApi.runtime?.sendMessage) {
+                        browserApi.runtime.sendMessage({ type: "SET_MUADHIN", muadhinFile: muadhinFile });
+                    }
+                }
             }
         });
-        recitersList.addEventListener('click', (e) => {
+        
+        listEl.addEventListener('click', (e) => {
             const button = e.target.closest('button');
             if (!button) return;
-            
+
             const input = button.querySelector('input');
             const spanEl = button.querySelector('span');
-            if (input && input.name === 'reciter') {
+            if (input && input.name === nameAttr) {
                 e.preventDefault();
-                // uncheck all other reciters and add low-opacity to their spans
-                recitersList.querySelectorAll('input[name="reciter"]').forEach(inputItem => {
+                // uncheck all others and add low-opacity to their spans
+                listEl.querySelectorAll(`input[name="${nameAttr}"]`).forEach(inputItem => {
                     inputItem.checked = false;
                     const btn = inputItem.parentElement;
                     const span = btn.querySelector('span');
                     if (span) span.classList.add('low-opacity');
                 });
-                // check the clicked reciter and remove low-opacity from its span
+                // check the clicked one and remove low-opacity from its span
                 input.checked = true;
                 spanEl.classList.remove('low-opacity');
-                saveData('selectedReciter', input.id);
+                
+                const value = input.id;
+                saveData(storageKey, value);
+                
+                // Notify background script if muadhin (need to get full filename)
+                if (storageKey === 'selectedMuadhin') {
+                    const muadhinFile = button?.dataset?.muadhinFile || value;
+                    const browserApi = typeof chrome !== "undefined" ? chrome : browser;
+                    if (browserApi.runtime?.sendMessage) {
+                        browserApi.runtime.sendMessage({ type: "SET_MUADHIN", muadhinFile: muadhinFile });
+                    }
+                }
             }
         });
-    }
+    };
+
+    // handle reciter selection change
+    handleAudioListSelection(
+        document.querySelector("#reciters-list"),
+        'selectedReciter',
+        'reciter',
+        null
+    );
+
+    // handle muadhin selection change
+    handleAudioListSelection(
+        document.querySelector("#muadhins-list"),
+        'selectedMuadhin',
+        'muadhin',
+        null
+    );
 
     // Move to  next Ayah
     ayahControlesContainer.addEventListener('click', (e) => {
