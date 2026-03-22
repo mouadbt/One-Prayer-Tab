@@ -73,14 +73,11 @@ browserApi.runtime.onMessage.addListener(async (msg) => {
   // Schedule prayer alarms
   if (msg.type === "SCHEDULE_PRAYER_ALARMS") {
     await clearPrayerAlarms();
-    // Test alarm: fire after 15 seconds
-    browserApi.alarms.create("prayer:Test", { delayInMinutes: 0.25 });
-    /*
+
     msg.payload.forEach(prayer => {
       browserApi.alarms.create(`prayer:${prayer.name}`, { when: prayer.timestamp });
       browserApi.alarms.create(`reminder:${prayer.name}`, { when: prayer.timestamp - 5 * 60 * 1000 });
     });
-    */
   }
 });
 
