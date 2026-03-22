@@ -1,10 +1,10 @@
 const browserApi = chrome;
 
 let currentAudio = null;
-let selectedMuadhinFile = "islam-subhi.m4a"; // default filename
+let selectedMuadhinFile = "islam-subhi.m4a";
 
 const playAudio = (file) => {
-  // Stop any playabale audio and start from 0
+  // Stop any playable audio and start from 0
   if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
 
   // create new audio
@@ -19,16 +19,20 @@ const playAudio = (file) => {
 
 // Listens for messages coming from background.js to determine which audio to play
 browserApi.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  if (msg.type === "PLAY_ATHAN") {
-    // Use the muadhin file from the message if provided
-    const muadhinFile = msg.muadhinFile || selectedMuadhinFile;
-    selectedMuadhinFile = muadhinFile;
-    playAudio(`assets/audio/${muadhinFile}`);
+  if (msg.type === "SET_MUADHIN") {
+    selectedMuadhinFile = msg.muadhinFile;
   }
-  if (msg.type === "PLAY_RING") playAudio("assets/audio/ring.mp3");
+  
+  if (msg.type === "PLAY_ATHAN") {
+    playAudio(`assets/audio/${selectedMuadhinFile}`);
+  }
+  
+  if (msg.type === "PLAY_RING") {
+    playAudio("assets/audio/ring.mp3");
+  }
 
   // Stop the athan when the user clicks on the notification
   if (msg.type === "STOP_AUDIO") {
     if (currentAudio) { currentAudio.pause(); currentAudio = null; }
   }
-})
+});

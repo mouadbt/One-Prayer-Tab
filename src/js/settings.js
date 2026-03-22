@@ -8,7 +8,6 @@ export const applySystemSetting = (key, isActive) => {
             break;
 
         case 'enableNotifications':
-            // Store the setting value so prayers.js can check it
             saveData('enableNotifications', isActive);
             break;
 

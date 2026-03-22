@@ -69,7 +69,7 @@ const init = async () => {
   // Initialize ayah logic
   initAyah();
 
-};
+}
 
 // load and execute and start script after page fully load
 document.addEventListener("DOMContentLoaded", init);

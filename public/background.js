@@ -1,7 +1,7 @@
 const browserApi = typeof chrome !== "undefined" ? chrome : browser;
 const isFirefox = typeof browser !== "undefined";
 let currentAudio = null;
-let selectedMuadhinFile = "islam-subhi.m4a"; // default filename
+let selectedMuadhinFile = "islam-subhi.m4a";
 
 // Make sure offscreen doc exists before sending it a message (chrome only)
 const ensureOffscreen = async () => {
@@ -31,14 +31,14 @@ const playSoundOnFirefoxBasedBrwosers = (type) => {
   const file = type === "PLAY_ATHAN" ? `assets/audio/${selectedMuadhinFile}` : "assets/audio/ring.mp3";
   currentAudio = new Audio(browserApi.runtime.getURL(file));
   currentAudio.onended = () => { currentAudio = null; };
-  currentAudio.play().catch((err) => console.error("Audio error:", err));
+  currentAudio.play().catch((err) => console.error("[Background] Audio error:", err));
 }
 
 // Play athan or ring sounds
 const playSound = async (type) => {
   if (!isFirefox) {
     await ensureOffscreen();
-    browserApi.runtime.sendMessage({ type, muadhinFile: selectedMuadhinFile });
+    browserApi.runtime.sendMessage({ type });
   } else {
     playSoundOnFirefoxBasedBrwosers(type);
   }
@@ -63,33 +63,35 @@ const clearPrayerAlarms = async () => {
   }
 }
 
-// Receive alarm schedule requests from the page
+// Receive messages from the page
 browserApi.runtime.onMessage.addListener(async (msg) => {
-  if (msg.type === "SCHEDULE_PRAYER_ALARMS") {
-    await clearPrayerAlarms();
-    msg.payload.forEach(prayer => {
-      browserApi.alarms.create(`prayer:${prayer.name}`, { when: prayer.timestamp });
-      browserApi.alarms.create(`reminder:${prayer.name}`, { when: prayer.timestamp - 5 * 60 * 1000 });
-    });
-  }
   // Receive selected muadhin from the page
   if (msg.type === "SET_MUADHIN") {
     selectedMuadhinFile = msg.muadhinFile;
   }
-})
+
+  // Schedule prayer alarms
+  if (msg.type === "SCHEDULE_PRAYER_ALARMS") {
+    await clearPrayerAlarms();
+    // Test alarm: fire after 15 seconds
+    browserApi.alarms.create("prayer:Test", { delayInMinutes: 0.25 });
+    /*
+    msg.payload.forEach(prayer => {
+      browserApi.alarms.create(`prayer:${prayer.name}`, { when: prayer.timestamp });
+      browserApi.alarms.create(`reminder:${prayer.name}`, { when: prayer.timestamp - 5 * 60 * 1000 });
+    });
+    */
+  }
+});
 
 // When an alarm fires play the right sound and show a notification
 browserApi.alarms.onAlarm.addListener(async (alarm) => {
-
   // Ignore alarms that are more than 2 minutes late
-  // This handles the case where the browser was closed and reopened after the scheduled time
   const diff = Date.now() - alarm.scheduledTime;
   if (diff > 2 * 60 * 1000) {
-    console.log(`Skipping stale alarm: ${alarm.name}`);
     return;
   }
 
-  // Extract prayer name from alarm name e.g. "prayer:Fajr" -> "Fajr"
   const prayerName = alarm.name.split(":")[1];
 
   if (alarm.name.startsWith("reminder:")) {
@@ -101,8 +103,8 @@ browserApi.alarms.onAlarm.addListener(async (alarm) => {
     showNotification(alarm.name, "Prayer Time", `It's now time for ${prayerName}`);
     playSound("PLAY_ATHAN");
   }
-})
+});
 
 browserApi.notifications.onClosed.addListener((id) => {
   if (id.startsWith("prayer:") || id.startsWith("reminder:")) stopSound();
-})
+});

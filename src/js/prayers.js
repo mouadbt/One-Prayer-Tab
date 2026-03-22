@@ -19,7 +19,7 @@ const loadPrayers = () => loadData(STORAGE_KEY, null);
 // Format hijri date string from api object
 const formatHijri = (date) => {
   return `${date.hijri.day} - ${date.hijri.month.ar} / ${date.hijri.month.en} - ${date.hijri.year}`
-};
+}
 
 // extract only the 5 allowed prayers timings from a day
 const extractTimings = (day) => {
@@ -29,7 +29,7 @@ const extractTimings = (day) => {
     const cleanTime = timeStr.split(" ")[0];
     return { name, time: cleanTime };
   });
-};
+}
 
 // Format full api month data for storage
 const formatForStorage = (apiData, lat, lon) => {
@@ -46,7 +46,7 @@ const formatForStorage = (apiData, lat, lon) => {
     lastFetched: Date.now(),
     prayers,
   };
-};
+}
 
 // Get current time in seconds (api timestamps are in seconds)
 const nowSeconds = () => Math.floor(Date.now() / 1000);
@@ -58,7 +58,7 @@ const findTodayIndex = (prayers) => {
     const start = Number(p.timestamp);
     return now >= start && now < start + 86400; // 86400s = 24h
   });
-};
+}
 
 // Load today's prayers + tomorrow's fajr from storage into memory
 const prepareTodayPrayers = () => {
@@ -74,13 +74,13 @@ const prepareTodayPrayers = () => {
   todayPrayers = [...today.timings];
   // add tomorrow's fajr so the next prayer
   if (tomorrow) todayPrayers.push(tomorrow.timings[0]);
-};
+}
 
 // Parse "HH:MM (TZ)" string into hour and min numbers
 const parseTime = (timeStr) => {
   const [hour, min] = timeStr.split(" ")[0].split(":");
   return { hour: Number(hour), min: Number(min) };
-};
+}
 
 // Build a ms timestamp for a prayer time today
 const toTimestamp = (hour, min) => new Date().setHours(hour, min, 0, 0);
@@ -91,7 +91,7 @@ const fixTomorrowFajr = (timestamp, isLast) => {
     return timestamp + 24 * 60 * 60 * 1000;
   }
   return timestamp;
-};
+}
 
 // Mark each prayer as "passed" / "next" / "upcoming"
 const categorizePrayers = (prayers) => {
@@ -113,7 +113,7 @@ const categorizePrayers = (prayers) => {
 
     return { ...prayer, timestamp, type };
   });
-};
+}
 
 // Get hours and mins remaining until a timestamp
 const getTimeLeft = (timestamp) => {
@@ -122,7 +122,7 @@ const getTimeLeft = (timestamp) => {
   const hours = Math.floor(diff / 3600000);
   const mins = Math.floor((diff % 3600000) / 60000);
   return { hours, mins };
-};
+}
 
 // Send prayer timestamps to background so it can schedule alarms
 const scheduleAlarms = (categorized) => {
@@ -133,19 +133,10 @@ const scheduleAlarms = (categorized) => {
   const browserApi = typeof chrome !== "undefined" ? chrome : browser;
   if (!browserApi.runtime?.sendMessage) return;
 
-  // Get selected muadhin identifier and find full filename from defaults
-  const selectedMuadhinId = loadData('selectedMuadhin', 'islam-subhi');
-  const muadhins = loadData('muadhins', null);
-  let selectedMuadhinFile = 'islam-subhi.m4a'; // default
+  // Get selected muadhin file from localStorage
+  const selectedMuadhinFile = loadData('selectedMuadhin', 'islam-subhi.m4a');
   
-  if (muadhins) {
-    const muadhin = muadhins.find(m => m.identifier === selectedMuadhinId);
-    if (muadhin) {
-      selectedMuadhinFile = muadhin.file;
-    }
-  }
-
-  // Send muadhin selection to background
+  // Send selected muadhin to background
   browserApi.runtime.sendMessage({ type: "SET_MUADHIN", muadhinFile: selectedMuadhinFile });
 
   // only send prayers that haven't passed yet
@@ -154,14 +145,14 @@ const scheduleAlarms = (categorized) => {
     .map((p) => ({ name: p.name, timestamp: p.timestamp }));
 
   browserApi.runtime.sendMessage({ type: "SCHEDULE_PRAYER_ALARMS", payload: upcoming });
-};
+}
 
 // ms remaining until next midnight
 const msUntilMidnight = () => {
   const midnight = new Date();
   midnight.setHours(24, 0, 0, 0);
   return midnight - Date.now();
-};
+}
 
 // Refresh cache, render ui, schedule all alarms
 const dailySetup = () => {
@@ -188,7 +179,7 @@ const dailySetup = () => {
     clearTimeout(midnightTimer)
   };
   midnightTimer = setTimeout(dailySetup, msUntilMidnight());
-};
+}
 
 // Re-categorize from cache and update ui countdown
 const minuteUpdate = () => {
@@ -202,12 +193,12 @@ const minuteUpdate = () => {
 
   const { hours, mins } = getTimeLeft(next.timestamp);
   renderNextPrayer(next.name, hours, mins);
-};
+}
 
 // Build api url for a given month
 const buildApiEndpoint = (year, month, lat, lon) => {
   return `https://api.aladhan.com/v1/calendar/${year}/${month}?latitude=${lat}&longitude=${lon}`;
-};
+}
 
 // Fetch current month + first day of next month then save and refresh ui
 const fetchPrayers = async (lat, lon) => {
@@ -235,25 +226,25 @@ const fetchPrayers = async (lat, lon) => {
 
   // re-run daily setup now that we have fresh data
   dailySetup();
-};
+}
 
 // Check if stored data is from a different month or year
 const isOldData = (stored) => {
   const now = new Date();
   return stored.year !== now.getFullYear() || stored.month !== now.getMonth() + 1;
-};
+}
 
 // Check if the user has moved (coords changed)
 const isCoordsChanged = (stored, coords) => {
   return stored.lastcoords?.[0] !== coords[0] || stored.lastcoords?.[1] !== coords[1]
-};
+}
 
 // Return true if we need to call the api again
 const needsFetch = (coords) => {
   const stored = loadPrayers();
   if (!stored) return true;
   return isOldData(stored) || isCoordsChanged(stored, coords);
-};
+}
 
 // init praeyrs logic
 export const initPrayers = () => {
@@ -267,4 +258,4 @@ export const initPrayers = () => {
   if (needsFetch(coords)) {
     fetchPrayers(lat, lon)
   };
-};
+}

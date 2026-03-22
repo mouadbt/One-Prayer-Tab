@@ -65,7 +65,7 @@ const handleMap = (coords) => {
         initPrayers();
         initWeather();
     });
-};
+}
 
 // Get the user's IP address
 const getUserIpAddress = async () => {

@@ -153,20 +153,22 @@ export const setupGlobalListeners = (engines, settings) => {
     // handle audio list selection change (reciters and muadhins)
     const handleAudioListSelection = (listEl, storageKey, nameAttr, getMessageData) => {
         if (!listEl) return;
-        
+
         listEl.addEventListener('change', (e) => {
             if (e.target.tagName === 'INPUT' && e.target.name === nameAttr) {
                 const value = e.target.id;
-                saveData(storageKey, value);
-                
-                // Notify background script if muadhin (need to get full filename)
+                // For muadhin, save the file value instead of identifier
                 if (storageKey === 'selectedMuadhin') {
                     const button = e.target.closest('button');
                     const muadhinFile = button?.dataset?.muadhinFile || value;
+                    saveData(storageKey, muadhinFile);
+                    // Notify background script
                     const browserApi = typeof chrome !== "undefined" ? chrome : browser;
                     if (browserApi.runtime?.sendMessage) {
                         browserApi.runtime.sendMessage({ type: "SET_MUADHIN", muadhinFile: muadhinFile });
                     }
+                } else {
+                    saveData(storageKey, value);
                 }
             }
         });
@@ -189,17 +191,18 @@ export const setupGlobalListeners = (engines, settings) => {
                 // check the clicked one and remove low-opacity from its span
                 input.checked = true;
                 spanEl.classList.remove('low-opacity');
-                
-                const value = input.id;
-                saveData(storageKey, value);
-                
-                // Notify background script if muadhin (need to get full filename)
+
+                // For muadhin, save the file value instead of identifier
                 if (storageKey === 'selectedMuadhin') {
-                    const muadhinFile = button?.dataset?.muadhinFile || value;
+                    const muadhinFile = button?.dataset?.muadhinFile || input.id;
+                    saveData(storageKey, muadhinFile);
+                    // Notify background script
                     const browserApi = typeof chrome !== "undefined" ? chrome : browser;
                     if (browserApi.runtime?.sendMessage) {
                         browserApi.runtime.sendMessage({ type: "SET_MUADHIN", muadhinFile: muadhinFile });
                     }
+                } else {
+                    saveData(storageKey, input.id);
                 }
             }
         });
