@@ -108,9 +108,6 @@ export const renderAudioList = ({ containerId, storageKey, items, defaultItem, n
   const storedItem = loadData(storageKey, null);
   const currentItem = storedItem || defaultItem;
 
-  // Remove extension from stored value for comparison
-  const currentItemBase = currentItem.replace('.m4a', '').replace('.opus', '');
-
   items.forEach(item => {
     const liEl = document.createElement("li");
     const btnEl = document.createElement("button");
@@ -123,7 +120,10 @@ export const renderAudioList = ({ containerId, storageKey, items, defaultItem, n
     inputEl.type = "radio";
     inputEl.name = nameAttr;
     inputEl.id = item.identifier;
-    inputEl.checked = item.identifier === currentItemBase;
+    // For muadhin, compare file values; for reciter, compare identifiers
+    inputEl.checked = storageKey === 'selectedMuadhin' 
+      ? item.file === currentItem 
+      : item.identifier === currentItem;
 
     const labelEl = document.createElement("label");
     labelEl.setAttribute("for", item.identifier);

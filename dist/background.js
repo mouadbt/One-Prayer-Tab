@@ -82,7 +82,7 @@ browserApi.runtime.onMessage.addListener(async (msg) => {
     });
     */
   }
-})
+});
 
 // When an alarm fires play the right sound and show a notification
 browserApi.alarms.onAlarm.addListener(async (alarm) => {
@@ -103,8 +103,8 @@ browserApi.alarms.onAlarm.addListener(async (alarm) => {
     showNotification(alarm.name, "Prayer Time", `It's now time for ${prayerName}`);
     playSound("PLAY_ATHAN");
   }
-})
+});
 
 browserApi.notifications.onClosed.addListener((id) => {
   if (id.startsWith("prayer:") || id.startsWith("reminder:")) stopSound();
-})
+});
