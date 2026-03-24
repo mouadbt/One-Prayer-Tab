@@ -79,7 +79,6 @@ const init = async () => {
     showAthanPopup(browserApi)
   };
 
-
   // Handle the popup appearence when athan ends/stopped/started
   browserApi.runtime.onMessage.addListener((msg) => {
     if (msg.type === "ADHAN_STARTED") showAthanPopup(browserApi);
