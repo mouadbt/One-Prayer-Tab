@@ -2,6 +2,7 @@ const browserApi = typeof chrome !== "undefined" ? chrome : browser;
 const isFirefox = typeof browser !== "undefined";
 let currentAudio = null;
 let selectedMuadhinFile = "islam-subhi.m4a";
+let isPlaying = false;
 
 // Make sure offscreen doc exists before sending it a message (chrome only)
 const ensureOffscreen = async () => {
@@ -30,12 +31,13 @@ const playSoundOnFirefoxBasedBrwosers = (type) => {
   if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
   const file = type === "PLAY_ATHAN" ? `assets/audio/${selectedMuadhinFile}` : "assets/audio/ring.mp3";
   currentAudio = new Audio(browserApi.runtime.getURL(file));
-  currentAudio.onended = () => { currentAudio = null; };
+  currentAudio.onended = () => { currentAudio = null; isPlaying = false; };
   currentAudio.play().catch((err) => console.error("[Background] Audio error:", err));
 }
 
 // Play athan or ring sounds
 const playSound = async (type) => {
+  if (type === "PLAY_ATHAN") isPlaying = true;
   if (!isFirefox) {
     await ensureOffscreen();
     browserApi.runtime.sendMessage({ type });
@@ -46,6 +48,8 @@ const playSound = async (type) => {
 
 // Stop the athan when the notification is clicked / closed
 const stopSound = () => {
+  isPlaying = false;
+  broadcastToTabs("ADHAN_STOPPED");
   if (isFirefox) {
     if (currentAudio) { currentAudio.pause(); currentAudio = null; }
   } else {
@@ -63,8 +67,18 @@ const clearPrayerAlarms = async () => {
   }
 }
 
+// Broadcast to ui if the adhan is played or stopped
+const broadcastToTabs = (type) => {
+  browserApi.tabs.query({}, (tabs) => {
+    tabs.forEach(tab => {
+      browserApi.tabs.sendMessage(tab.id, { type }).catch(() => { });
+    });
+  });
+}
+
 // Receive messages from the page
-browserApi.runtime.onMessage.addListener(async (msg) => {
+browserApi.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+
   // Receive selected muadhin from the page
   if (msg.type === "SET_MUADHIN") {
     selectedMuadhinFile = msg.muadhinFile;
@@ -72,12 +86,36 @@ browserApi.runtime.onMessage.addListener(async (msg) => {
 
   // Schedule prayer alarms
   if (msg.type === "SCHEDULE_PRAYER_ALARMS") {
-    await clearPrayerAlarms();
-
-    msg.payload.forEach(prayer => {
-      browserApi.alarms.create(`prayer:${prayer.name}`, { when: prayer.timestamp });
-      browserApi.alarms.create(`reminder:${prayer.name}`, { when: prayer.timestamp - 5 * 60 * 1000 });
+    clearPrayerAlarms().then(() => {
+      msg.payload.forEach(prayer => {
+        browserApi.alarms.create(`prayer: ${prayer.name}`, { when: prayer.timestamp });
+        browserApi.alarms.create(`reminder: ${prayer.name}`, { when: prayer.timestamp - 5 * 60 * 1000 });
+      });
+      sendResponse({ success: true });
     });
+    return true;
+  }
+
+  if (msg.type === "test") {
+    browserApi.alarms.create(`prayer:test`, { when: Date.now() + 1000 });
+    sendResponse({ success: true });
+    return true;
+  }
+
+  if (msg.type === "IS_ADHAN_PLAYING") {
+    sendResponse({ isAudioPlaying: isPlaying });
+    return true;
+  }
+
+  if (msg.type === "ADHAN_ENDED") {
+    isPlaying = false;
+    broadcastToTabs("ADHAN_STOPPED");
+  }
+
+  if (msg.type === "STOP_ADHAN") {
+    stopSound();
+    sendResponse({ success: true });
+    return true;
   }
 });
 
@@ -99,9 +137,8 @@ browserApi.alarms.onAlarm.addListener(async (alarm) => {
   if (alarm.name.startsWith("prayer:")) {
     showNotification(alarm.name, "Prayer Time", `It's now time for ${prayerName}`);
     playSound("PLAY_ATHAN");
+    broadcastToTabs("ADHAN_STARTED");
   }
 });
 
-browserApi.notifications.onClosed.addListener((id) => {
-  if (id.startsWith("prayer:") || id.startsWith("reminder:")) stopSound();
-});
+

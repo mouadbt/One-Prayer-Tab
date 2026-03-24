@@ -303,14 +303,27 @@ export const showPlayingAyahError = () => {
 
   // Remove the toast after 10 seconds
   setTimeout(() => {
-    removeElement(toast);
+    toast?.remove();
   }, 10000);
 
   toast.addEventListener('click', () => {
-    removeElement(toast);
+    toast.remove();
   });
 };
 
-const removeElement = (el) => {
-  el?.remove();
-}
+export const showAthanPopup = (browserApi) => {
+  // don't show twice
+  if (document.querySelector('#athan-popup')) return;
+
+  const popup = document.createElement('div');
+  popup.setAttribute('id', 'athan-popup');
+  popup.className = 'fixed bottom-4 left-1/2 w-10/12 max-w-sm rounded-3xl p-4 text-center text-(--background100)! bg-(--foreground100)! -translate-x-[50%] z-50 text-sm! cursor-pointer';
+
+  popup.appendChild(document.createTextNode('Adhan is playing. Click to stop.'));
+  document.body.appendChild(popup);
+
+  popup.addEventListener('click', () => {
+    browserApi.runtime.sendMessage({ type: "STOP_ADHAN" });
+    popup.remove();
+  });
+};

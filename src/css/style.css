@@ -94,10 +94,6 @@
     user-select: none;
 }
 
-.active-search-container {
-    transform: translateY(-10rem);
-}
-
 .with-suggestions .s_container {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;

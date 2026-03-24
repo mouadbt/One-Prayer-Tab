@@ -1,5 +1,5 @@
 import { fetchData, loadData } from "./utils.js";
-import { renderEngines, renderIcons } from "./ui.js";
+import { renderEngines, renderIcons, showAthanPopup } from "./ui.js";
 import { applyAllSettings } from "./settings.js";
 import { setupGlobalListeners } from "./events.js";
 import { initSuggestionsLogic } from "./suggestions.js";
@@ -30,6 +30,10 @@ const init = async () => {
 
   // Get the muadhins from default const
   const muadhins = DEFAULTS.muadhins;
+
+  // Get browser api object based on browser if it chrome or firefox
+  const browserApi = typeof chrome !== "undefined" ? chrome : browser;
+
 
   // Render the icons in the page
   renderIcons(icons);
@@ -68,6 +72,19 @@ const init = async () => {
 
   // Initialize ayah logic
   initAyah();
+
+  // Ask if a adhan is playing on load
+  const res = await browserApi.runtime.sendMessage({ type: "IS_ADHAN_PLAYING" });
+  if (res?.isAudioPlaying) {
+    showAthanPopup(browserApi)
+  };
+
+
+  // Handle the popup appearence when athan ends/stopped/started
+  browserApi.runtime.onMessage.addListener((msg) => {
+    if (msg.type === "ADHAN_STARTED") showAthanPopup(browserApi);
+    if (msg.type === "ADHAN_STOPPED") document.querySelector('#athan-popup')?.remove();
+  });
 
 }
 
