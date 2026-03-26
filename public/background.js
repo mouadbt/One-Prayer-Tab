@@ -109,11 +109,11 @@ browserApi.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     return true;
   }
 
-  if (msg.type === "test") {
-    browserApi.alarms.create(`prayer:test`, { when: Date.now() + 1000 });
-    sendResponse({ success: true });
-    return true;
-  }
+  // if (msg.type === "test") {
+  //   browserApi.alarms.create(`prayer:test`, { when: Date.now() + 1000 });
+  //   sendResponse({ success: true });
+  //   return true;
+  // }
 
   if (msg.type === "IS_ADHAN_PLAYING") {
     sendResponse({ isAudioPlaying: isPlaying });

@@ -182,7 +182,7 @@ export const renderMuadhins = (muadhins, icons) => {
     containerId: 'muadhins-list',
     storageKey: 'selectedMuadhin',
     items: muadhins,
-    defaultItem: 'islam-subhi',
+    defaultItem: 'islam-subhi.m4a',
     nameAttr: 'muadhin'
   }, icons);
 }
