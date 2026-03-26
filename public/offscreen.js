@@ -18,7 +18,6 @@ const playAudio = (file, type) => {
 
   // Handle audio errors during playback
   currentAudio.onerror = () => {
-    console.error("Audio error:", currentAudio.error);
     currentAudio = null;
     if (type === "PLAY_ATHAN") browserApi.runtime.sendMessage({ type: "ADHAN_ENDED" });
   };

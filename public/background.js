@@ -31,15 +31,18 @@ const playSoundOnFirefoxBasedBrwosers = (type) => {
   if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
   const file = type === "PLAY_ATHAN" ? `assets/audio/${selectedMuadhinFile}` : "assets/audio/ring.mp3";
   currentAudio = new Audio(browserApi.runtime.getURL(file));
-  currentAudio.onended = () => { currentAudio = null; isPlaying = false; };
+  currentAudio.onended = () => {
+    currentAudio = null;
+    isPlaying = false;
+    if (type === "PLAY_ATHAN") broadcastToTabs("ADHAN_STOPPED");
+  };
   currentAudio.onerror = () => {
-    console.error("[Background] Audio error:", currentAudio.error);
     currentAudio = null;
     isPlaying = false;
     broadcastToTabs("ADHAN_STOPPED");
   };
   currentAudio.play().catch((err) => {
-    console.error("[Background] Audio error:", err);
+    console.error("[Background] Audio play error:", err);
     currentAudio = null;
     isPlaying = false;
     broadcastToTabs("ADHAN_STOPPED");
@@ -89,7 +92,6 @@ const broadcastToTabs = (type) => {
 
 // Receive messages from the page
 browserApi.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-
   // Receive selected muadhin from the page
   if (msg.type === "SET_MUADHIN") {
     selectedMuadhinFile = msg.muadhinFile;
