@@ -9,6 +9,7 @@ A minimalist browser extension (Chrome + Firefox) that replaces your new tab pag
 ![Screenshot 3](public/assets/images/screenshots/s3.png)
 ![Screenshot 4](public/assets/images/screenshots/s4.png)
 ![Screenshot 5](public/assets/images/screenshots/s5.png)
+![Screenshot 6](public/assets/images/screenshots/s6.png)
 
 ## Features
 
