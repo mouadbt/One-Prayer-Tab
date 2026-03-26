@@ -16,8 +16,19 @@ const playAudio = (file, type) => {
     if (type === "PLAY_ATHAN") browserApi.runtime.sendMessage({ type: "ADHAN_ENDED" });
   };
 
+  // Handle audio errors during playback
+  currentAudio.onerror = () => {
+    console.error("Audio error:", currentAudio.error);
+    currentAudio = null;
+    if (type === "PLAY_ATHAN") browserApi.runtime.sendMessage({ type: "ADHAN_ENDED" });
+  };
+
   // Play the audio and log any error
-  currentAudio.play().catch((err) => console.error("Audio play error:", err));
+  currentAudio.play().catch((err) => {
+    console.error("Audio play error:", err);
+    currentAudio = null;
+    if (type === "PLAY_ATHAN") browserApi.runtime.sendMessage({ type: "ADHAN_ENDED" });
+  });
 }
 
 // Listens for messages coming from background.js to determine which audio to play

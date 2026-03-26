@@ -32,7 +32,18 @@ const playSoundOnFirefoxBasedBrwosers = (type) => {
   const file = type === "PLAY_ATHAN" ? `assets/audio/${selectedMuadhinFile}` : "assets/audio/ring.mp3";
   currentAudio = new Audio(browserApi.runtime.getURL(file));
   currentAudio.onended = () => { currentAudio = null; isPlaying = false; };
-  currentAudio.play().catch((err) => console.error("[Background] Audio error:", err));
+  currentAudio.onerror = () => {
+    console.error("[Background] Audio error:", currentAudio.error);
+    currentAudio = null;
+    isPlaying = false;
+    broadcastToTabs("ADHAN_STOPPED");
+  };
+  currentAudio.play().catch((err) => {
+    console.error("[Background] Audio error:", err);
+    currentAudio = null;
+    isPlaying = false;
+    broadcastToTabs("ADHAN_STOPPED");
+  });
 }
 
 // Play athan or ring sounds
