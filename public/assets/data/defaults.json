@@ -55,13 +55,13 @@
       "label": "Focus search bar on new tab",
       "active": true,
       "key": "focusOnLoad",
-      "regular": true
+      "renderInFirefox": false
     },
     {
       "label": "Enable prayer notifications",
       "active": true,
       "key": "enableNotifications",
-      "regular": true
+      "renderInFirefox": true
     }
   ],
   "reciters": [

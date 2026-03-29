@@ -21,8 +21,9 @@ const init = async () => {
 
   // Get the settings from localstorage or default const
   const settings = loadData("settingsOptions", DEFAULTS.settingsOptions);
+  const isFirefox = typeof browser !== "undefined";
   const renderedSettings = settings.filter((el) => {
-    return el.regular == true;
+    return isFirefox ? el.renderInFirefox == true : true;
   });
 
   // Get the reciters from default const
@@ -42,7 +43,7 @@ const init = async () => {
   renderEngines(engines);
 
   //  Render the settings in the page
-  renderSettings(renderedSettings, engines, icons, reciters);
+  renderSettings(renderedSettings, icons, reciters);
 
   // Render the muadhins in the page
   renderMuadhins(muadhins, icons);

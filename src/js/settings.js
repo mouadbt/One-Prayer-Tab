@@ -35,8 +35,11 @@ export const handleSettingChange = (key, isActive, settings) => {
 // Focus the cursor on the search input and override the browser's default behavior of focusing the address bar
 export const focusOnSearchInput = (inputEl) => {
     inputEl.focus();
-    if (location.search !== "?focus") {
-        location.search = "?focus";
-        throw new Error("Redirecting to focus mode");
+    const isFirefox = typeof browser !== "undefined" && typeof chrome === "undefined";
+    if (!isFirefox) {
+        if (location.search !== "?focus") {
+            location.search = "?focus";
+            throw new Error("Redirecting to focus mode");
+        }
     }
 }

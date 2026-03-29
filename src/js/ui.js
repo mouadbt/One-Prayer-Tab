@@ -1,7 +1,7 @@
 import { toggleClassName, saveData, loadData } from "./utils.js";
 
 // render the settings options & search engines in the settings panel
-export const renderSettings = (settings, engines, icons, reciters) => {
+export const renderSettings = (settings, icons, reciters) => {
   const settingsContainer = document.querySelector("#settings-options");
 
   // render settings options
