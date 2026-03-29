@@ -1,6 +1,6 @@
 {
   "name": "One Prayer Tab",
-  "version": "2.3",
+  "version": "1.0",
   "manifest_version": 3,
   "description": "A custom new tab page with prayer times, weather and more...",
   "browser_specific_settings": {
