@@ -1,10 +1,31 @@
 # One Prayer Tab
 
+![Version](https://img.shields.io/badge/version-2.0-blue)
+![Chrome](https://img.shields.io/badge/Chrome-supported-brightgreen?logo=googlechrome)
+![Firefox](https://img.shields.io/badge/Firefox-supported-brightgreen?logo=firefox)
+![License](https://img.shields.io/badge/license-open%20source-green)
+![No Tracking](https://img.shields.io/badge/tracking-none-lightgrey)
+
 A minimalist browser extension (Chrome + Firefox) that replaces your new tab page with a clean interface with search functionality, prayer times, weather and more. Inspired by the Copilot website interface.
 
-## Screenshots
-
 ![Screenshot 1](public/assets/images/screenshots/s1.png)
+
+## Table of Contents
+- [Screenshots](#screenshots)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Installation](#installation)
+- [How It Works](#how-it-works)
+- [APIs Used](#apis-used)
+- [Browser Support](#browser-support)
+- [Permissions](#permissions)
+- [Build & Deploy](#build--deploy)
+- [Contributing](#contributing)
+- [License](#license)
+- [Support](#support)
+
+## Screenshots
 
 ![Screenshot 2](public/assets/images/screenshots/s2.png)
 
