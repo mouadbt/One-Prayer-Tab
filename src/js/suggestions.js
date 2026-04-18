@@ -27,7 +27,16 @@ const showSuggestions = async (query, suggestionsList, searchContainer) => {
     const hasHistory = (isFirefox && typeof browser !== 'undefined' && browser.history) || (!isFirefox && typeof chrome !== 'undefined' && chrome.history);
 
     if (!hasTopSites || !hasHistory) {
-        suggestionsList.innerHTML = '<li><a class="suggestion-link no-link"><span>We have issue getting the suggestion from your browser</span><span></span></a></li>';
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.className = 'suggestion-link no-link';
+        const span1 = document.createElement('span');
+        span1.textContent = 'We have issue getting the suggestion from your browser';
+        const span2 = document.createElement('span');
+        a.append(span1, span2);
+        li.append(a);
+        suggestionsList.textContent = '';
+        suggestionsList.append(li);
         return;
     }
 
@@ -156,7 +165,7 @@ const getFaviconUrl = (origin) => {
 
 // remove the suggestions from the suggestions list
 const clearSuggestions = (suggestionsList) => {
-    suggestionsList.innerHTML = '';
+    suggestionsList.textContent = '';
 }
 
 const handleSearchContainerRadius = (suggestions, searchContainer) => {

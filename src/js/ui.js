@@ -16,7 +16,7 @@ export const renderEngines = (engines) => {
   const searchEnginesList = document.querySelector("#search-engines-list");
   const preferedEngineLabel = document.querySelector("#prefered-engine-label");
   //  Clear the container of search engines because this function is called on load and on update of the search engines selection / delegation
-  searchEnginesList.innerHTML = '';
+  searchEnginesList.textContent = '';
   engines.filter((el) => el.active === true).forEach((el, i) => {
 
     const liEL = document.createElement("li");
@@ -41,7 +41,7 @@ const renderPreferedEngineIcon = (key) => {
   const iconEl = document.querySelector("#searchIcon");
   const icon = document.createElement('img');
   icon.src = `/assets/images/searchLogos/${key}.webp`;
-  iconEl.innerHTML = '';
+  iconEl.textContent = '';
   iconEl.appendChild(icon);
 }
 
@@ -62,7 +62,7 @@ export const buildTheSvgIcon = (svgIconContent, btn, withDimensions) => {
 export const renderIcons = (icons) => {
   document.querySelectorAll('[data-icon]').forEach((el) => {
     const svgIconContent = icons[el.dataset.icon]?.content;
-    el.innerHTML = '';
+    el.textContent = '';
     buildTheSvgIcon(svgIconContent, el);
   });
 }
@@ -249,7 +249,7 @@ export const renderNextPrayer = (name, hours, mins) => {
 // Renders all prayers
 export const renderAllPrayers = (categorizedPrayers) => {
   const listEl = document.getElementById("prayers-list");
-  listEl.innerHTML = "";
+  listEl.textContent = "";
 
   categorizedPrayers.forEach((prayer) => {
     const li = document.createElement("li");

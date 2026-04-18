@@ -37,6 +37,8 @@ A minimalist browser extension (Chrome + Firefox) that replaces your new tab pag
 
 ![Screenshot 6](public/assets/images/screenshots/s6.png)
 
+![Screenshot 7](public/assets/images/screenshots/s7.png)
+
 ## Features
 
 ### Prayer Times
@@ -72,7 +74,7 @@ A minimalist browser extension (Chrome + Firefox) that replaces your new tab pag
 ### Search
 
 - Quick search from new tab
-- Multiple search engines support (Startpage, Google, DuckDuckGo, etc.)
+- Multiple search engines support (Startpage, Google, DuckDuckGo, Brave, Bing, ChatGPT, etc.)
 - Set preferred search engine
 - URL detection - type a URL and press enter to navigate directly
 - Search suggestions from browser history and top sites

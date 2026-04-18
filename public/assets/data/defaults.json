@@ -48,6 +48,20 @@
       "active": true,
       "preferred": false,
       "url": "https://chat.openai.com/?q="
+    },
+    {
+      "key": "brave",
+      "label": "Brave",
+      "active": true,
+      "preferred": false,
+      "url": "https://search.brave.com/search?q="
+    },
+    {
+      "key": "bing",
+      "label": "Bing",
+      "active": true,
+      "preferred": false,
+      "url": "https://www.bing.com/search?q="
     }
   ],
   "settingsOptions": [

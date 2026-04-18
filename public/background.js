@@ -6,7 +6,7 @@ let isPlaying = false;
 
 // Make sure offscreen doc exists before sending it a message (chrome only)
 const ensureOffscreen = async () => {
-  if (!(await browserApi.offscreen.hasDocument?.())) {
+  if (browserApi.offscreen && !(await browserApi.offscreen.hasDocument?.())) {
     await browserApi.offscreen.createDocument({
       url: "offscreen.html",
       reasons: ["AUDIO_PLAYBACK"],
