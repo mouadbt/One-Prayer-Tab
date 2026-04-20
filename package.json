@@ -10,7 +10,7 @@
     "build": "vite build"
   },
   "name": "oneprayertab",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A minimalist browser extension (Chrome + Firefox) that replaces your new tab page with a clean interface with search functionality, prayer times, weather and more...",
   "main": "index.js",
   "repository": {

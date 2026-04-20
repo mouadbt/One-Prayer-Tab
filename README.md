@@ -8,7 +8,7 @@
 
 A minimalist browser extension (Chrome + Firefox) that replaces your new tab page with a clean interface with search functionality, prayer times, weather and more. Inspired by the Copilot website interface.
 
-![Screenshot 1](public/assets/images/screenshots/s1.png)
+![Screenshot 1](public/assets/images/screenshots/8.png)
 
 ## Table of Contents
 - [Screenshots](#screenshots)
@@ -27,17 +27,20 @@ A minimalist browser extension (Chrome + Firefox) that replaces your new tab pag
 
 ## Screenshots
 
-![Screenshot 2](public/assets/images/screenshots/s2.png)
+![Screenshot 2](public/assets/images/screenshots/2.png)
 
-![Screenshot 3](public/assets/images/screenshots/s3.png)
+![Screenshot 3](public/assets/images/screenshots/3.png)
 
-![Screenshot 4](public/assets/images/screenshots/s4.png)
+![Screenshot 4](public/assets/images/screenshots/4.png)
 
-![Screenshot 5](public/assets/images/screenshots/s5.png)
+![Screenshot 5](public/assets/images/screenshots/5.png)
 
-![Screenshot 6](public/assets/images/screenshots/s6.png)
+![Screenshot 6](public/assets/images/screenshots/6.png)
 
-![Screenshot 7](public/assets/images/screenshots/s7.png)
+![Screenshot 7](public/assets/images/screenshots/7.png)
+
+> [!TIP]
+> **View all screenshots:** You can find all screenshots of the extension in the [screenshots folder](public/assets/images/screenshots/).
 
 ## Features
 
