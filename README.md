@@ -2,11 +2,12 @@
 
 ![Version](https://img.shields.io/badge/version-2.0-blue)
 ![Chrome](https://img.shields.io/badge/Chrome-supported-brightgreen?logo=googlechrome)
-![Firefox](https://img.shields.io/badge/Firefox-supported-brightgreen?logo=firefox)
+[![Mozilla Add-on](https://img.shields.io/badge/Firefox_Add--on-Install-orange?logo=firefox)](https://addons.mozilla.org/addon/one-prayer-tab/)
 ![License](https://img.shields.io/badge/license-open%20source-green)
 ![No Tracking](https://img.shields.io/badge/tracking-none-lightgrey)
 
 A minimalist browser extension (Chrome + Firefox) that replaces your new tab page with a clean interface with search functionality, prayer times, weather and more. Inspired by the Copilot website interface.
+**🎉 Now available on [Mozilla Add-ons](https://addons.mozilla.org/addon/one-prayer-tab/)!**
 
 ![Screenshot 1](public/assets/images/screenshots/8.webp)
 
@@ -149,30 +150,46 @@ onePrayerTab/
 
 ## Installation
 
-### Development
+### Firefox
 
-1. Clone the repo:
+#### From Mozilla Add-ons (Recommended)
+1. Visit [One Prayer Tab on Mozilla Add-ons](https://addons.mozilla.org/addon/one-prayer-tab/)
+2. Click "Add to Firefox"
+3. Confirm the installation prompt
+4. Open a new tab to see the new tab page
 
-```bash
-git clone https://github.com/mouadbt/One-Newtab-Prayer.git
-cd onePrayerTab
-```
+#### From Release File (Pre-built)
+1. Download the latest `.xpi` or `.zip` file from the [Releases](https://github.com/mouadbt/One-Newtab-Prayer/releases) page.
+2. Open Firefox and navigate to `about:addons`.
+3. Click the gear icon (⚙️) and select **"Install Add-on From File..."**.
+4. Select the downloaded file and confirm.
 
-2. Install dependencies:
+#### From Source (Developer Mode)
+1. Clone or download this repository
+2. Install dependencies with `npm install`
+3. Build the project with `npm run build`
+4. Open Firefox and navigate to `about:debugging#/runtime/this-firefox`
+5. Click "Load Temporary Add-on…"
+6. Select `dist/manifest.json`
 
-```bash
-npm install
-```
+> Note: The temporary add-on install resets when you restart Firefox. If you want a persistent install, use the [Mozilla Add-ons link](https://addons.mozilla.org/addon/one-prayer-tab/) or the **Release File** method above.
 
-3. Build the extension:
+### Chrome / Chromium
 
-```bash
-npm run build
-```
+#### From Release (Pre-built)
+1. Download the latest release ZIP file from the [Releases](https://github.com/mouadbt/One-Newtab-Prayer/releases) page.
+2. Extract the ZIP file to a folder.
+3. Open Chrome and navigate to `chrome://extensions/`.
+4. Enable **"Developer mode"** (top right toggle).
+5. Click **"Load unpacked"** and select the folder you just extracted.
 
-4. Load in browser:
-   - **Chrome**: Go to `chrome://extensions/` → Enable "Developer mode" → Click "Load unpacked" → Select the `dist` folder
-   - **Firefox**: Go to `about:debugging#/runtime/this-firefox` → Click "Load Temporary Add-on" → Select `dist/manifest.json`
+#### From Source (Developer Mode)
+1. Clone or download this repository
+2. Install dependencies with `npm install`
+3. Build the project with `npm run build`
+4. Open Chrome and navigate to `chrome://extensions/`
+5. Enable **"Developer mode"**
+6. Click **"Load unpacked"** and select the `dist` folder
 
 ### Development Mode
 
