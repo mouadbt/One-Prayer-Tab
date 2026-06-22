@@ -3,11 +3,13 @@
 ![Version](https://img.shields.io/badge/version-2.0-blue)
 ![Chrome](https://img.shields.io/badge/Chrome-supported-brightgreen?logo=googlechrome)
 [![Mozilla Add-on](https://img.shields.io/badge/Firefox_Add--on-Install-orange?logo=firefox)](https://addons.mozilla.org/addon/one-prayer-tab/)
-![License](https://img.shields.io/badge/license-open%20source-green)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-yellow.svg)](LICENSE)
 ![No Tracking](https://img.shields.io/badge/tracking-none-lightgrey)
 
 A minimalist browser extension (Chrome + Firefox) that replaces your new tab page with a clean interface with search functionality, prayer times, weather and more. Inspired by the Copilot website interface.
 **🎉 Now available on [Mozilla Add-ons](https://addons.mozilla.org/addon/one-prayer-tab/)!**
+
+Free and open-source under AGPL-3.0.
 
 ![Screenshot 1](public/assets/images/screenshots/8.webp)
 
@@ -278,15 +280,15 @@ Output goes to `dist/` folder ready for extension upload.
 
 ## Contributing
 
-1. Fork the repo
-2. Create a feature branch
-3. Make your changes
-4. Test in both Chrome and Firefox
-5. Submit a PR
+By submitting a contribution, you agree that your contribution will be licensed under the GNU Affero General Public License v3.0 (AGPL-3.0).
 
 ## License
 
-ISC
+Copyright (C) 2026 Mouad
+
+This project is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0).
+
+See the [LICENSE](LICENSE) file for details.
 
 ## Support
 
